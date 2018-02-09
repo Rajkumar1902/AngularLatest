@@ -1,16 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
-// some basic resets 
+// some basic resets
+$active-navlink: #b5b3b9;
 
-body { 
-  padding: 0; 
-  margin: 0; 
-  font-family: Roboto, sans-serif; 
-  
+body {
+  padding: 0;
+  margin: 0;
+  font-family: Roboto, sans-serif;
+
 }
 
-.example-container {
+.toolbar-container {
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -19,21 +20,36 @@ body {
     left: 0;
     right: 0;
   }
-  
-  .example-toolbar {
-    position: fixed;
-    /* Make sure the toolbar will stay on top of the content as it scrolls past. */
-    z-index: 2;
+
+  .example-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
-  
+
+  .example-toolbar {
+    //position: fixed;
+    /* Make sure the toolbar will stay on top of the content as it scrolls past. */
+    //z-index: 2;
+  }
+
   h1.example-app-name {
     margin-left: 8px;
   }
-  
+
   .example-sidenav-container {
     /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
        causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
     flex: 1;
   }
-  
- 
+
+.active {
+    background: $active-navlink;
+  }
+
+
+

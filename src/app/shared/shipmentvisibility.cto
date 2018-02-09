@@ -1,0 +1,330 @@
+/**
+ * A business network for shipping perishable goods
+ * The cargo is temperature controlled and contracts
+ * can be negociated based on the temperature
+ * readings received for the cargo
+ */
+
+namespace com.jda.shipment.visibility
+
+/**
+ * The freight payment terms of the shipment
+ *
+ */
+enum FreightTerms {
+  o FT_PRE_PAID
+o FT_COLLECT
+}
+
+/**
+ * The status of a shipment
+ */
+enum ShipmentStatus {
+  o CREATED
+o IN_TRANSIT
+o ARRIVED
+}
+/**
+ * Unit of measure. Could be Imperial or Metric
+ */
+enum UnitOfMeasure {
+  o UMS_NULL
+o UMS_IMPERIAL
+o UMS_METRIC
+}
+/**
+ * Shipment leg status
+ */
+enum ShipmentLegStatus {
+  o DSTS_NULL
+o DSTS_SL_D_PROCESSING
+o DSTS_SL_D_ASSIGNED_TO_CARRIER
+o DSTS_SL_D_PICKING_UP
+o DSTS_SL_D_IN_TRANSIT
+o DSTS_SL_D_PARTIALLY_DELIVERED
+o DSTS_SL_D_DELIVERED
+o DSTS_SL_D_PARTIALLY_POD
+o DSTS_SL_D_POD
+o DSTS_SL_D_CLOSED
+o DSTS_SL_D_LLPURGED
+}
+/**
+ * Load  status
+ */
+enum LoadStatus {
+  o S_NULL
+o S_OPEN
+o S_PLANNED
+o S_TENDERED
+o S_TENDER_REJECTED
+o S_TENDER_ACCEPTED
+o S_LOADING_CONFIRMING
+o S_LOADED_CONFIRMED
+o S_IN_TRANSIT
+o S_STOPPED
+o S_COMPLETED
+o S_CLOSED
+o S_CANCELLED
+}
+
+/**
+ * A concept for a simple street address
+ */
+abstract concept Address {
+  o String city optional
+  o String country optional
+  o String locality optional
+  o String region optional
+  o String street optional
+  o String street2 optional
+  o String street3 optional
+  o String postalCode optional
+  o String postOfficeBoxNumber optional
+  o Double latitude optional
+  o Double longitude optional
+}
+
+/**
+ * A location concept to encapsulate address and location ID
+ */
+concept Location extends Address {
+  o String locationCode
+}
+
+/**
+ * This concept is implemented in other assets to capture
+ * important logging information
+ */
+concept LoggingInfo {
+  o String createdByUser optional
+  o DateTime createdDateTime optional
+  o String updatedByUser optional
+  o DateTime updatedDateTime optional
+}
+/**
+ * Shipment container information. When appears at the shipment details level
+ * then contains information about the container of that shipment details.
+ * When appears at shipment level then container agreegated information about
+ * the shipment.
+ */
+concept ShipmentContainerInfo {
+  o Double scaledWeight optional
+  o Double volume optional
+  o Double orderValue optional
+  o Double declaredValue optional
+  o Double nominalWeight optional
+  o Double tareWeight optional
+  o Double pieces optional
+  o Double skids optional
+  o Double ladenLength optional
+  o Double flexibleQuantity1 optional
+  o Double flexibleQuantity2 optional
+  o Double flexibleQuantity3 optional
+  o Double flexibleQuantity4 optional
+  o Double flexibleQuantity5 optional
+}
+
+/**
+ * The shipment line with details about quantity and physical dimensions of
+ * items being shipped.
+ */
+abstract asset ShipmentDetails identified by shipmentDetailsId {
+  o String shipmentDetailsId
+  o Double itemNumber optional
+  o String itemPackageLevelIDCode optional
+  o String itemGroupCode optional
+  o String itemType optional
+  o String originCountryCode optional
+  o Double quantity optional// This is the quantity of items package levels e.g. cases, pallets etc.
+  o Double numberOfUnits optional// this is the number of units of a particular item e.g. 1000 clocks
+  o Double length optional
+  o Double width optional
+  o Double height optional
+  o ShipmentContainerInfo shipmentContainerInfo
+}
+
+/**
+ * The shipment legs
+ */
+abstract asset ShipmentLegs identified by shipmentLegId {
+  o String shipmentLegId
+  o Double shipmentSequenceNumber
+  o Location shipFromLocation
+  o Location shipToLocation
+  o DateTime pickupArrivalDateTime optional
+  o DateTime pickupDepartureDateTime optional
+  o DateTime dropArrivalDateTime optional
+  o DateTime dropDepartureDateTime optional
+  o ShipmentLegStatus shipmentLegStatus optional
+  --> Load load optional
+}
+
+/**
+ * A shipment being tracked as an asset on the ledger
+ */
+asset Shipment identified by shipmentId {
+  o String shipmentId
+  o FreightTerms freightTerms optional
+  o Location shipFromLocation
+  o Location shipToLocation
+  o DateTime pickupFromDateTime optional
+  o DateTime pickupToDateTime optional
+  o DateTime deliveryFromDateTime optional
+  o DateTime deliveryToDateTime optional
+  o String commodityCode optional
+  o UnitOfMeasure unitOfMeasure
+  o ShipmentContainerInfo shipmentContainerInfo // This is aggregated shipment weight, volume, etc information.
+  o ShipmentDetails[] shipmentDetails // these are individual shipment lines
+  o LoggingInfo loggingInfo
+  --> ShipmentLegs[] shipmentLegs
+}
+
+/**
+ * Defines a Load that is going to carry various shipment legs.
+ */
+asset Load identified by loadId {
+  o String loadId
+  o Location shipFromLocation
+  o Location shipToLocation
+  o UnitOfMeasure unitOfMeasure
+  o String currencyCode
+  o Double loadChargeAmount
+  o ShipmentContainerInfo loadDimInfo // This attribute contains load physical dimension information
+  o LoadStatus loadStatus
+  o Double VerifiedGrossMass optional
+  o String VGMAuthorizer optional
+  o String VGMWeighingMethod optional
+  o DateTime VGMWeighingDateTime optional
+  o DateTime VGMVerificationDateTime optional
+  o String carrierCode
+  o String serviceCode
+  o DateTime VesselArrivalDateTime optional
+  o DateTime VesselDepartureDateTime optional
+  o String VesselName optional
+  o String VoyageNumber optional
+  o LoggingInfo loggingInfo
+  --> ShipmentLegs[] ShipmentLegs
+}
+
+/**
+ * Defines a Load that is going to carry various shipment legs.
+ */
+asset Booking identified by bookingId {
+  o String bookingId
+  o Location shipFromLocation
+  o Location shipToLocation
+  o UnitOfMeasure unitOfMeasure
+  o String currencyCode
+  o Double chargeAmount
+  o LoadStatus status
+  o String carrierCode
+  o String serviceCode
+  o DateTime VesselArrivalDateTime optional
+  o DateTime VesselDepartureDateTime optional
+  o String VesselName optional
+  o String VoyageNumber optional
+  o LoggingInfo loggingInfo
+  --> Load[] loads
+}
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * An abstract transaction that is related to a Shipment
+ */
+abstract transaction ShipmentTransaction {
+  --> Shipment shipment
+}
+
+/**
+ * An abstract transaction that is related to a load
+ */
+abstract transaction LoadTransaction {
+  --> Load load
+}
+
+/**
+ * An abstract transaction that is related to a booking
+ */
+abstract transaction BookingTransaction {
+  --> Booking booking
+}
+
+/**
+ * Create Shipment
+ */
+transaction CreateShipment extends ShipmentTransaction {
+}
+
+/**
+ * Update Shipment
+ */
+transaction UpdateShipment extends ShipmentTransaction {
+}
+
+/**
+ * Create Shipment
+ */
+transaction CreateLoad extends ShipmentTransaction {
+}
+
+/**
+ * Provide Current Location of the load
+ */
+transaction CurrentLocationUpdateLoad extends LoadTransaction {
+
+}
+
+/**
+ * Provide Current Location of the booking
+ */
+transaction CurrentLocationUpdateBooking extends BookingTransaction {
+}
+
+
+/**
+ * An abstract participant type in this business network
+ */
+abstract participant Business identified by uniqueId {
+  o String uniqueId
+  o String businessName optional
+  o String email optional
+  o Address address
+  o Double accountBalance optional
+}
+
+/**
+ * A Shipper is a type of participant in the network. Shipper owns the shipment and needs
+ * the shipment to be transported from one place to another
+ */
+participant Shipper extends Business {
+}
+
+/**
+ * A Carrier is a type of participant in the network. This participant represents
+ * any carrier irrespective of the transit service it provides.
+ */
+participant Carrier extends Business {
+}
+
+
+/**
+ * An Supplier is a type of participant in the network. Supplier supplies the
+ * shipment gooods that shipper has ordered.
+ */
+participant Supplier extends Business {
+}
+
+/**
+ * JUST FOR INITIALIZING A DEMO
+ */
+transaction SetupDemo {
+}
