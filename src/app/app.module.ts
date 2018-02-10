@@ -15,7 +15,8 @@ import {MatToolbarModule,
   MatSortModule,
   MatPaginatorModule,
   MatFormFieldModule,
-  MatInputModule
+  MatInputModule,
+  MatCardModule
 } from '@angular/material';
 
 import {AppRoutingModule} from './app-routing/app-routing.module';
@@ -55,7 +56,8 @@ import { ShipperComponent } from './shipper/shipper.component';
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

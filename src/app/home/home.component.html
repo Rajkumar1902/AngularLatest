@@ -1,22 +1,64 @@
-<mat-horizontal-stepper>
-    <mat-step editable="false" completed="false">      
-      <div>
-       <p>Shipment Creation</p>
-      </div>
-    </mat-step>
-    <mat-step editable="false" completed="false">      
-        <div>
-          <p>Shipment Planning</p>
-        </div>
-      </mat-step>
-      <mat-step editable="false" completed="false">      
-        <div>
-          <p>Shipment In Transit</p>
-        </div>
-      </mat-step>
-      <mat-step editable="false" completed="false">      
-        <div>
-          <p>Shipment Reached</p>
-        </div>
-      </mat-step>
-  </mat-horizontal-stepper>
+<div fxLayout="column" class="flex-container">
+
+<div fxLayout="row" fxLayoutGap="10px"  class="flex-container">
+  <mat-card class="home-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h3>Shipment Creation</h3>
+      </mat-card-title>
+    </mat-card-header>
+    <img md-card-image src="assets\images\creation.png" alt="Shipment Creation">
+    <mat-card-content>
+      <p>some description...</p>
+    </mat-card-content>
+    <mat-card-actions fxLayoutAlign="center end">
+      <button mat-button>MORE INFO...</button>
+    </mat-card-actions>
+  </mat-card>
+  <img src="assets\images\direction.png" alt="direction">
+  <mat-card class="home-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h3>Shipment Planning</h3>
+      </mat-card-title>
+    </mat-card-header>
+    <img md-card-image src="assets\images\planning.png" alt="Shipment Planning">
+    <mat-card-content>
+      <p>some description...</p>
+    </mat-card-content>
+    <mat-card-actions fxLayoutAlign="center end">
+      <button mat-button>MORE INFO...</button>
+    </mat-card-actions>
+  </mat-card>
+  <img src="assets\images\direction.png" alt="direction">
+  <mat-card class="home-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h3>Shipment In Transit</h3>
+      </mat-card-title>
+    </mat-card-header>
+    <img md-card-image src="assets\images\transit.png" alt="Shipment In Transit">
+    <mat-card-content>
+      <p>some description...</p>
+    </mat-card-content>
+    <mat-card-actions fxLayoutAlign="center end">
+      <button mat-button>MORE INFO...</button>
+    </mat-card-actions>
+  </mat-card>
+  <img src="assets\images\direction.png" alt="direction">
+  <mat-card class="home-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h3>Shipment Delivered</h3>
+      </mat-card-title>
+    </mat-card-header>
+    <img md-card-image src="assets\images\delivery.png" alt="Shipment Delivery">
+    <mat-card-content>
+      <p>some description...</p>
+    </mat-card-content>
+    <mat-card-actions fxLayoutAlign="center end">
+      <button mat-button>MORE INFO...</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+</div>
