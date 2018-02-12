@@ -1,9 +1,12 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Inject } from '@angular/core';
 import {MatTableDataSource, MatSort, MatPaginator} from '@angular/material';
 
 
 import { SHIPMENTS } from '../shared/TempData/shipments';
 import { Shipment } from '../shared/shipment';
+
+import { ShipperService } from '../services/shipper.service';
+
 
 @Component({
   selector: 'app-shipper',
@@ -14,7 +17,9 @@ export class ShipperComponent implements OnInit {
 
   displayedColumns = ['shipmentId', 'shipFromLocation', 'shipToLocation', 'pickupFromDateTime',
     'pickupToDateTime', 'deliveryFromDateTime', 'deliveryToDateTime', 'commodityCode', 'unitOfMeasure'];
-  dataSource = new MatTableDataSource<Shipment>(SHIPMENTS);
+
+  shipments: Shipment[];
+  dataSource = new MatTableDataSource<Shipment>(this.shipments);
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -34,9 +39,12 @@ export class ShipperComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  constructor() { }
+  constructor(private shipperService: ShipperService,
+              @Inject('BaseURL') private BaseURL) { }
 
   ngOnInit() {
+    this.shipperService.getShipments().subscribe(shipments => this.shipments = shipments);
+    //console.log(this.shipments);
   }
 
 }

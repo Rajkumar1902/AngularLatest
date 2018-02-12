@@ -3,9 +3,12 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { RestangularModule, Restangular } from 'ngx-restangular';
+import { RestangularConfigFactory } from './shared/restConfig';
+import {baseURL} from './shared/baseurl';
 
-
-import {MatToolbarModule,
+import {
+  MatToolbarModule,
   MatIconModule,
   MatButtonModule,
   MatSidenavModule,
@@ -16,7 +19,8 @@ import {MatToolbarModule,
   MatPaginatorModule,
   MatFormFieldModule,
   MatInputModule,
-  MatCardModule
+  MatCardModule,
+
 } from '@angular/material';
 
 import {AppRoutingModule} from './app-routing/app-routing.module';
@@ -29,7 +33,7 @@ import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { ShipperComponent } from './shipper/shipper.component';
 
-
+import { ShipperService } from './services/shipper.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +41,6 @@ import { ShipperComponent } from './shipper/shipper.component';
     HeaderComponent,
     HomeComponent,
     ShipperComponent,
-
   ],
   imports: [
     BrowserModule,
@@ -57,9 +60,12 @@ import { ShipperComponent } from './shipper/shipper.component';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatCardModule
+    MatCardModule,
+    RestangularModule.forRoot(RestangularConfigFactory)
   ],
-  providers: [],
+  providers: [
+    ShipperService, {provide: 'BaseURL', useValue: baseURL},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
