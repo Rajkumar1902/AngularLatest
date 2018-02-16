@@ -11,8 +11,8 @@ export class ShipperService {
   constructor(private restAngular: Restangular) { }
 
   getShipments(): Observable<Shipment[]> {
-    console.log(this.restAngular.all('/api/Shipment').getList());
-    return this.restAngular.all('/api/Shipment').getList();
+    //console.log(this.restAngular.all('/api/Shipment').getList());
+      return this.restAngular.all('/api/Shipment').getList();
     //return Observable.of(SHIPMENTS);
   }
 }
