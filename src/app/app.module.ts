@@ -5,7 +5,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { RestangularConfigFactory } from './shared/restConfig';
-import {baseURL} from './shared/baseurl';
+import { baseURL } from './shared/baseurl';
 
 import {
   MatToolbarModule,
@@ -20,6 +20,7 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatCardModule,
+  MatSelectModule
 
 } from '@angular/material';
 
@@ -34,6 +35,9 @@ import { HomeComponent } from './home/home.component';
 import { ShipperComponent } from './shipper/shipper.component';
 
 import { ShipperService } from './services/shipper.service';
+import { LoginComponent } from './login/login.component';
+import { CarrierComponent } from './carrier/carrier.component';
+import { FreightforwarderComponent } from './freightforwarder/freightforwarder.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +45,11 @@ import { ShipperService } from './services/shipper.service';
     HeaderComponent,
     HomeComponent,
     ShipperComponent,
+    LoginComponent,
+    CarrierComponent,
+    FreightforwarderComponent,
   ],
+
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -61,7 +69,8 @@ import { ShipperService } from './services/shipper.service';
     MatFormFieldModule,
     MatInputModule,
     MatCardModule,
-    RestangularModule.forRoot(RestangularConfigFactory)
+    RestangularModule.forRoot(RestangularConfigFactory),
+    MatSelectModule
   ],
   providers: [
     ShipperService, {provide: 'BaseURL', useValue: baseURL},

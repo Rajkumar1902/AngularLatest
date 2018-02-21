@@ -1,0 +1,24 @@
+<div class="container"
+     fxLayout="column"
+     fxLayout.sm="column"
+     fxLayout.xs="column"
+     fxLayoutAlign.gt-md="space-around center"
+     fxLayoutGap="20px">
+
+  <mat-form-field>
+    <mat-select placeholder="Player Type">
+      <mat-option *ngFor="let playerType of playerTypes" [value]="playerType.value" (click)="getPlayers(playerType);">
+        {{ playerType.viewValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-select placeholder="Player">
+      <mat-option *ngFor="let player of players" [value]="player.value">
+        {{ player.viewValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button md-button mat-raised-button color="primary" [routerLink]="routerLink">Proceed</button>
+</div>
