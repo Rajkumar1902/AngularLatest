@@ -19,7 +19,7 @@ export class ShipperComponent implements OnInit {
     'pickupToDateTime', 'deliveryFromDateTime', 'deliveryToDateTime', 'commodityCode', 'unitOfMeasure'];
 
   shipments: Shipment[];
-  dataSource = new MatTableDataSource<Shipment>(this.shipments);
+  dataSource: MatTableDataSource<Shipment>;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -35,16 +35,30 @@ export class ShipperComponent implements OnInit {
    * be able to query its view for the initialized sort.
    */
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+    //this.dataSource.sort = this.sort;
+    //this.dataSource.paginator = this.paginator;
   }
 
   constructor(private shipperService: ShipperService,
               @Inject('BaseURL') private BaseURL) { }
 
   ngOnInit() {
-    this.shipperService.getShipments().subscribe(shipments => this.shipments = shipments);
-    //console.log(this.shipments);
+
+    this.shipperService.getShipments().subscribe(shipments => {this.shipments = shipments;
+    this.dataSource = new MatTableDataSource<Shipment>(this.shipments);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    });
+    /*let tempList = [];
+    return this.shipperService.getShipments()
+      .toPromise()
+      .then((result) => {
+        result.forEach(asset => {
+          tempList.push(asset);
+        });
+        this.shipments = tempList;
+        console.log(this.shipments);
+      });*/
   }
 
 }
