@@ -6,6 +6,13 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { RestangularConfigFactory } from './shared/restConfig';
 import { baseURL } from './shared/baseurl';
+import * as FusionCharts from 'fusioncharts';
+import * as Charts from 'fusioncharts/fusioncharts.charts';
+import * as FintTheme from 'fusioncharts/themes/fusioncharts.theme.fint';
+import { FusionChartsModule } from 'angular4-fusioncharts';
+
+FusionChartsModule.fcRoot(FusionCharts, Charts, FintTheme);
+
 
 import {
   MatToolbarModule,
@@ -38,6 +45,8 @@ import { ShipperService } from './services/shipper.service';
 import { LoginComponent } from './login/login.component';
 import { CarrierComponent } from './carrier/carrier.component';
 import { FreightforwarderComponent } from './freightforwarder/freightforwarder.component';
+import { ShipmentsComponent } from './shipments/shipments.component';
+import { ShipmentdetailComponent } from './shipmentdetail/shipmentdetail.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +57,8 @@ import { FreightforwarderComponent } from './freightforwarder/freightforwarder.c
     LoginComponent,
     CarrierComponent,
     FreightforwarderComponent,
+    ShipmentsComponent,
+    ShipmentdetailComponent,
   ],
 
   imports: [
@@ -70,8 +81,9 @@ import { FreightforwarderComponent } from './freightforwarder/freightforwarder.c
     MatInputModule,
     MatCardModule,
     RestangularModule.forRoot(RestangularConfigFactory),
-    MatSelectModule
-  ],
+    MatSelectModule,
+    FusionChartsModule
+   ],
   providers: [
     ShipperService, {provide: 'BaseURL', useValue: baseURL},
   ],

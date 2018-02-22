@@ -1,76 +1,50 @@
-<div class="example-container" fxLayout="column" fxLayoutAlign="top stretch">
 
-  <div class="example-header">
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-    </mat-form-field>
-  </div>
-
-
-  <mat-table #table [dataSource]="dataSource" matSort>
-
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
-
-    <!-- ShipmentId Column -->
-    <ng-container matColumnDef="shipmentId">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ShipmentID </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.shipmentId}} </mat-cell>
-    </ng-container>
-
-    <!-- Created Date Column -->
-    <ng-container matColumnDef="shipFromLocation">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Ship From </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.shipFromLocation.locationCode}} </mat-cell>
-    </ng-container>
-
-    <!-- Status Column -->
-    <ng-container matColumnDef="shipToLocation">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Ship To </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.shipToLocation.locationCode}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="pickupFromDateTime">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup From </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.pickupFromDateTime | date}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="pickupToDateTime">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup To </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.pickupToDateTime | date}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="deliveryFromDateTime">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Delivery From Date </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.deliveryFromDateTime | date}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="deliveryToDateTime">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Delivery To Date </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.deliveryToDateTime | date}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="commodityCode">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Commodity </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.commodityCode}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="unitOfMeasure">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> UOM </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.unitOfMeasure}} </mat-cell>
-    </ng-container>
+<mat-toolbar style="font-size: small">
+  Total Shipments: 100
+  <span class="flex-spacer"></span>
+  <mat-form-field class="example-form-field">
+    <input matInput type="text" placeholder="Shipment ID" [(ngModel)]="value"/>
+    <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <button mat-button  matSuffix mat-icon-button routerLink="/shipments"><mat-icon>search</mat-icon></button>
+</mat-toolbar>
 
 
+<div><h5 style="padding-left: 10px">Shipments</h5><hr/></div>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
+<br>
+<br>
 
-  <mat-paginator #paginator
-                 [pageSize]="10"
-                 [pageSizeOptions]="[5, 10, 20]"
-                 [showFirstLastButtons]="true">
-  </mat-paginator>
+<div fxLayout="column" class="flex-container">
+<div class="flex-container"
+     fxLayout="row"
+     fxLayoutGap="20px">
+  <mat-card>
+    <div fxFlex>
+      <fusioncharts
+        [width]="width"
+        [height]="height"
+        [type]="type"
+        [dataFormat]="dataFormat"
+        [dataSource]="shipmentStatusDataSource">
+      </fusioncharts>
+    </div>
+  </mat-card>
 
-
+  <mat-card>
+    <div fxFlex>
+      <fusioncharts
+        [width]="width"
+        [height]="height"
+        [type]="type"
+        [dataFormat]="dataFormat"
+        [dataSource]="countriesDataSource">
+      </fusioncharts>
+    </div>
+  </mat-card>
 </div>
+</div>
+
+
