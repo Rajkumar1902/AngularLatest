@@ -4,9 +4,20 @@
       <mat-icon>menu</mat-icon>
     </button>
     <h1 class="example-app-name">TM Block Chain</h1>
+    <span class="flex-spacer"></span>
+
+    <button mat-icon-button (click)="snav.toggle()">
+      <mat-icon matTooltip="notifications">notifications</mat-icon>
+      <span class="notification">5</span>
+    </button>
+    <span style="padding-left: 10px"></span>
+    <button mat-icon-button routerLink="/login">
+      <mat-icon matTooltip="login">account_circle</mat-icon>
+    </button>
+
   </mat-toolbar>
 
-<mat-sidenav-container class="" fxFlex="">
+  <mat-sidenav-container class="" fxFlex="">
     <mat-sidenav #snav mode='over' fixedInViewport='true' fixedTopGap="60" >
       <mat-nav-list>
         <a mat-list-item  routerLink="/home" routerLinkActive = "active">Home</a>
@@ -17,7 +28,7 @@
     <mat-sidenav-content>
       <router-outlet></router-outlet>
     </mat-sidenav-content>
-</mat-sidenav-container>
+  </mat-sidenav-container>
 
 
 </div>

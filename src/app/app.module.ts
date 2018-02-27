@@ -27,7 +27,8 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatCardModule,
-  MatSelectModule
+  MatSelectModule,
+  MatTooltipModule
 
 } from '@angular/material';
 
@@ -82,7 +83,8 @@ import { ShipmentdetailComponent } from './shipmentdetail/shipmentdetail.compone
     MatCardModule,
     RestangularModule.forRoot(RestangularConfigFactory),
     MatSelectModule,
-    FusionChartsModule
+    FusionChartsModule,
+    MatTooltipModule
    ],
   providers: [
     ShipperService, {provide: 'BaseURL', useValue: baseURL},
