@@ -1,3 +1,4 @@
+<!--
 <div fxLayout="column" class="container">
 <div fxLayout="row" class="container"  fxLayoutGap="20px" fxLayoutAlign="center">
     <mat-card>
@@ -27,7 +28,7 @@
       </mat-horizontal-stepper>
     </mat-card>
 
- <!-- <mat-card>
+ &lt;!&ndash; <mat-card>
     <mat-vertical-stepper>
       <mat-step label="Hyderabad">
         Started from warehouse
@@ -48,6 +49,61 @@
         Reached Noida
       </mat-step>
     </mat-vertical-stepper>
-  </mat-card>-->
+  </mat-card>&ndash;&gt;
 </div>
+</div>
+-->
+No of Shipment Legs: {{count}}
+<br>
+shipmentLeg1
+<br>
+--------------------------------
+<br>
+shipmentLegId:{{shipment.shipmentLegs[0].shipmentLegId}}
+<br>
+shipmentFrom:{{shipment.shipFromLocation.city}}
+<br>
+shipmentTo:{{shipment.shipToLocation.city}}
+<br>
+ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFromLocation| date}}-{{shipment.shipmentLegs[0].actualArrivalDateTimeFromLocation| date}}
+<div fxLayout="column" class="flex-container">
+
+  <div fxLayout="row" fxLayoutGap="10px"  class="flex-container">
+    <mat-card class="home-card">
+      <mat-card-header>
+        <mat-card-title>
+          <h3>Shipment Status</h3>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-horizontal-stepper >
+        <ng-template matStepperIcon="edit">
+          <mat-icon>alarm-off</mat-icon>
+        </ng-template>
+
+        <mat-step label="Hyderabad" mat-list-icon="edit">
+          Started from warehouse
+        </mat-step>
+        <mat-step label="Chennai" [completed]="true">
+          Reached chennai
+        </mat-step>
+        <mat-step label="Bangalore" [completed]="true">
+          Reached hub
+        </mat-step>
+        <mat-step label="Mumbai" [completed]="true">
+          <div class="md-step-title">In-transit to Delhi
+          </div>
+        </mat-step>
+        <mat-step label="Delhi">
+          Pick up from Delhi
+        </mat-step>
+        <mat-step label="Noida">
+          Reached Noida
+        </mat-step>
+      </mat-horizontal-stepper>
+
+
+
+    </mat-card>
+
+  </div>
 </div>

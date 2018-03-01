@@ -15,4 +15,11 @@ export class ShipperService {
       return this.restAngular.all('/api/Shipment').getList();
     //return Observable.of(SHIPMENTS);
   }
+
+  getShipment(id: number): Observable<Shipment> {
+    console.log("inside shipment detail service call");
+    console.log(this.restAngular.one('/api/Shipment', id).get());
+    return this.restAngular.one('/api/Shipment', id).get();
+    //return Observable.of(SHIPMENTS);
+  }
 }

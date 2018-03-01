@@ -11,5 +11,13 @@ export abstract class ShipmentLegs {
   dropArrivalDateTime: string;
   dropDepartureDateTime: string;
   shipmentLegStatus: ShipmentLegStatus;
+  computedArrivalDateTimeFromLocation: string;
+  computedDepartureDateTimeFromLocation: string;
+  computedArrivalDateTimeToLocation: string;
+  computedDepartureDateTimeToLocation: string;
+  actualArrivalDateTimeFromLocation: string;
+  actualDepartureDateTimeFromLocation: string;
+  actualArrivalDateTimeToLocation: string;
+  actualDepartureDateTimeToLocation: string;
   // Load load optional
 }
