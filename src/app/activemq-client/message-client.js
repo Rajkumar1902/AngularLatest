@@ -3,8 +3,8 @@
 
 
 /*var SERVER_ADDRESS = 'c71dq72j.jda.corp.local';
-var SERVER_PORT = 61613;
-var QUEUE = '/queue/Shipment';*/
+ var SERVER_PORT = 61613;
+ var QUEUE = '/queue/Shipment';*/
 soap = require('soap');
 var SERVER_ADDRESS = 'localhost';
 var SERVER_PORT = 61613;
@@ -200,43 +200,43 @@ stompClient.connect(function() {
     }
     return shipmentLegAssets;
   }
-    function fillShipmentLegs(shipmentLegs, shipTm) {
-      var shipmentLegAssets = [];
-      for (i = 0; i < shipmentLegs.length; i++) {
-        var shipmentLegTm = shipmentLegs[i];
-        var shipmentLegAsset = new ShipmentLeg();
-        shipmentLegAsset.$class = "com.jda.shipment.visibility.ShipmentLegs";
-        shipmentLegAsset.shipmentLegId = shipmentLegTm.Id;
-        shipmentLegAsset.shipmentSequenceNumber = shipmentLegTm.ShipmentSequenceNumber;
-        shipmentLegAsset.shipmentLegStatus = shipmentLegTm.DisplayStatusEnumVal;
-        //shipmentLegAsset.carrierCode =
+  function fillShipmentLegs(shipmentLegs, shipTm) {
+    var shipmentLegAssets = [];
+    for (i = 0; i < shipmentLegs.length; i++) {
+      var shipmentLegTm = shipmentLegs[i];
+      var shipmentLegAsset = new ShipmentLeg();
+      shipmentLegAsset.$class = "com.jda.shipment.visibility.ShipmentLegs";
+      shipmentLegAsset.shipmentLegId = shipmentLegTm.Id;
+      shipmentLegAsset.shipmentSequenceNumber = shipmentLegTm.ShipmentSequenceNumber;
+      shipmentLegAsset.shipmentLegStatus = shipmentLegTm.DisplayStatusEnumVal;
+      //shipmentLegAsset.carrierCode =
 
-        var shipLegFromLocation = new Location();
-        shipLegFromLocation.$class = 'com.jda.shipment.visibility.Location';
-        shipLegFromLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
-        fillAddress(shipLegFromLocation, shipmentLegTm.ShipFromAddress);
+      var shipLegFromLocation = new Location();
+      shipLegFromLocation.$class = 'com.jda.shipment.visibility.Location';
+      shipLegFromLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
+      fillAddress(shipLegFromLocation, shipmentLegTm.ShipFromAddress);
 
-        shipmentLegAsset.shipFromLocation = shipLegFromLocation;
+      shipmentLegAsset.shipFromLocation = shipLegFromLocation;
 
-        var shipLegToLocation = new Location();
-        shipLegToLocation.$class = 'com.jda.shipment.visibility.Location';
-        shipLegToLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
-        fillAddress(shipLegToLocation, shipmentLegTm.ShipToAddress);
+      var shipLegToLocation = new Location();
+      shipLegToLocation.$class = 'com.jda.shipment.visibility.Location';
+      shipLegToLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
+      fillAddress(shipLegToLocation, shipmentLegTm.ShipToAddress);
 
-        shipmentLegAsset.shipToLocation = shipLegToLocation;
+      shipmentLegAsset.shipToLocation = shipLegToLocation;
 
-        fillOnShipmentCreation(shipmentLegAsset, shipTm);
+      fillOnShipmentCreation(shipmentLegAsset, shipTm);
 
 
-        shipmentLegAssets[i] = shipmentLegAssets;
+      shipmentLegAssets[i] = shipmentLegAssets;
 
-      }
+    }
     return shipmentLegAssets;
   }
 
   function writeToBlockChain(asset, restUrl) {
     asset = JSON.stringify(asset);
-  //  console.log(asset)
+    //  console.log(asset)
     var http = require('http');
     var postheaders = {
       'Content-Type': 'application/json',
