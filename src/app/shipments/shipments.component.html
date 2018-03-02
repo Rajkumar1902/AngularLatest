@@ -14,29 +14,39 @@
 
     <!-- ShipmentId Column -->
     <ng-container matColumnDef="shipmentId">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ShipmentID </mat-header-cell>
-      <mat-cell *matCellDef="let element" routerLink="/shipmentDetail"> {{element.shipmentId}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> ShipmentID </mat-header-cell>
+      <mat-cell *matCellDef="let element" [routerLink]="['/shipmentDetail', element.shipmentId]">
+        <button mat-button >
+          <span style="font-size: x-small;">{{element.shipmentId}}</span>
+        </button>
+      </mat-cell>
     </ng-container>
 
-    <!-- Created Date Column -->
+    <ng-container matColumnDef="shipmentStatus">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <span>{{element.shipmentStatus}}</span>
+      </mat-cell>
+    </ng-container>
+
     <ng-container matColumnDef="shipFromLocation">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Ship From </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Ship From</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.shipFromLocation.locationCode}} </mat-cell>
     </ng-container>
 
     <!-- Status Column -->
     <ng-container matColumnDef="shipToLocation">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Ship To </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Ship To</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.shipToLocation.locationCode}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="pickupFromDateTime">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup From </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup From Date</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.pickupFromDateTime | date}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="pickupToDateTime">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup To </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup To Date</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.pickupToDateTime | date}} </mat-cell>
     </ng-container>
 
@@ -54,13 +64,6 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header> Commodity </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.commodityCode}} </mat-cell>
     </ng-container>
-
-    <ng-container matColumnDef="unitOfMeasure">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> UOM </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.unitOfMeasure}} </mat-cell>
-    </ng-container>
-
-
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

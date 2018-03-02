@@ -14,8 +14,8 @@ import { ShipperService } from '../services/shipper.service';
 })
 export class ShipmentsComponent implements OnInit {
 
-  displayedColumns = ['shipmentId', 'shipFromLocation', 'shipToLocation', 'pickupFromDateTime',
-    'pickupToDateTime', 'deliveryFromDateTime', 'deliveryToDateTime', 'commodityCode', 'unitOfMeasure'];
+  displayedColumns = ['shipmentId', 'shipmentStatus', 'shipFromLocation', 'shipToLocation', 'pickupFromDateTime',
+    'pickupToDateTime', 'deliveryFromDateTime', 'deliveryToDateTime', ];
 
   shipments: Shipment[];
   dataSource: MatTableDataSource<Shipment>;
@@ -44,7 +44,7 @@ export class ShipmentsComponent implements OnInit {
   ngOnInit() {
 
     this.shipperService.getShipments().subscribe(shipments => {this.shipments = shipments;
-      this.dataSource = new MatTableDataSource<Shipment>(this.shipments);
+      this.dataSource = new MatTableDataSource<Shipment>(/*SHIPMENTS*/this.shipments);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
     });

@@ -52,7 +52,7 @@ body {
   }
 
 .mat-raised-button.mat-primary {
-  background: #286cb3;
+  background: #00a9e0;
   color: #fff;
 }
 
@@ -64,4 +64,13 @@ body {
   width: 200px;
 }
 
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
 
+.flex-container {
+  display: flex;
+  height: 300px;
+  align-items: center;
+}

@@ -1,89 +1,145 @@
 
-<mat-toolbar>
-  <h4>Shipment Status:SHP01</h4>
-  <span class="flex-spacer"></span>
-  <button mat-button>Refresh</button>
-  <button mat-button routerLink="/shipper">Done</button>
-</mat-toolbar>
+<!--
+No of Shipment Legs: {{count}}
+<br>
+shipmentLeg1
+<br>
+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+<br>
+shipmentLegId:{{shipment.shipmentLegs[0].shipmentLegId}}
+<br>
+shipmentFrom:{{shipment.shipFromLocation.city}}
+<br>
+shipmentTo:{{shipment.shipToLocation.city}}
+<br>
+ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFromLocation| date}}-{{shipment.shipmentLegs[0].actualArrivalDateTimeFromLocation| date}}
 
+-->
 
-<div fxLayout="row" fxLayoutGap="0px">
-  <div id="box">
-    <div id="content">
-      Delayed <h1>2:59</h1> hours
-    </div>
-  </div>
-  <div id="box">
-    <div id="content">
-      <h1>3 of 5</h1> stops completed
-    </div>
-  </div>
-  <div id="box">
-    <div id="content">
-      <h3>15. DEP - Carrier Departed De</h3>
-      <h4>4. 886YZL, Denver, CO</h4>
-      <p>02-Aug-2013 13:54 (UTC-05:54)<br>
-        Last Recorded Event</p>
-    </div>
-  </div>
-  <div id="box">
-    <div id="content">
-      <strong>AS54888</strong> Shipment ID<br>
-      <strong>3,200.38 USD</strong> Shipment Cost<br>
-      <strong>754,878.21 USD</strong> Freight Value
-    </div>
-  </div>
-  <div id="box">
-    <div id="content">
-      <h4>Truckload</h4>
-      <h4>VTTC</h4>
-      <h4>147995CW</h4>
-      <h4>*Vision Trucking</h4>
-    </div>
-  </div>
-  <div id="box">
-    <div id="content">
-      <h1>78%</h1> Weight Utilization
-    </div>
-  </div>
-  <div id="box">
-    <div id="content">
-      <h1>47</h1> Orders
-    </div>
-  </div>
+<div class="example-container" fxLayout="column" fxLayoutAlign="top stretch">
+
+  <div class="example-header">
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+  </mat-form-field>
 </div>
 
-<mat-toolbar>
-  <h2>Route and Status</h2>
-</mat-toolbar>
 
-<div fxLayout="row" fxLayoutGap="0px" style="padding-left: 40px">
-  <div id="box1">
-    <div id="content">
-      DEL
-      <h6>02-Aug-2017</h6>
-    </div>
-  </div>
+<mat-table #table [dataSource]="dataSource" matSort>
+
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- ShipmentId Column -->
+  <ng-container matColumnDef="shipmentLegId">
+    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Shipment Leg ID </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      {{element.shipmentLegId}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="shipmentLegStatus">
+    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Status </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      {{element.shipmentLegStatus}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="shipFromLocation">
+    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Ship From </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      {{element.shipFromLocation.locationCode}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="shipToLocation">
+    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Ship To </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      {{element.shipToLocation.locationCode}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="computedArrivalDateTimeFromLocation">
+    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Com. Arvl Time From Loc </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      {{element.computedArrivalDateTimeFromLocation | date}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="actualArrivalDateTimeFromLocation">
+    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Arrival Delay (Hrs) </mat-header-cell>
+    <mat-cell *matCellDef="let element" [ngClass]="{'positive' : element.arrivalDelay > 0, 'negative' : element.arrivalDelay < 0}">
+      {{element.arrivalDelay}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="computedDepartureDateTimeFromLocation">
+    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Com. Dpt Time From Loc </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      {{element.computedDepartureDateTimeFromLocation | date}}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="actualDepartureDateTimeFromLocation">
+    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Com. Dep Time From Loc </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      {{element.actualDepartureDateTimeFromLocation | date}}
+    </mat-cell>
+  </ng-container>
+
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator #paginator
+               [pageSize]="10"
+               [pageSizeOptions]="[5, 10, 20]"
+               [showFirstLastButtons]="true">
+</mat-paginator>
 </div>
 
-<ol class="progtrckr" data-progtrckr-steps="5">
-  <li class="progtrckr-done">
-  </li><!--
- --><li class="progtrckr-delaymin">
+<!--<div fxLayout="column" class="flex-container">
 
 
-</li><!--
- --><li class="progtrckr-delayhour">
 
 
-</li><!--
- --><li class="progtrckr-todo">
+  <div fxLayout="row" fxLayoutGap="10px"  class="flex-container">
+    <mat-card class="home-card">
+      <mat-card-header>
+        <mat-card-title>
+          <h3>Shipment Status</h3>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-horizontal-stepper >
+        <ng-template matStepperIcon="edit">
+          <mat-icon>alarm-off</mat-icon>
+        </ng-template>
 
-</li><!--
- --><li class="progtrckr-todo">
+        <mat-step label="Hyderabad" mat-list-icon="edit">
+          Started from warehouse
+        </mat-step>
+        <mat-step label="Chennai" [completed]="true">
+          Reached chennai
+        </mat-step>
+        <mat-step label="Bangalore" [completed]="true">
+          Reached hub
+        </mat-step>
+        <mat-step label="Mumbai" [completed]="true">
+          <div class="md-step-title">In-transit to Delhi
+          </div>
+        </mat-step>
+        <mat-step label="Delhi">
+          Pick up from Delhi
+        </mat-step>
+        <mat-step label="Noida">
+          Reached Noida
+        </mat-step>
+      </mat-horizontal-stepper>
 
 
-</li>
 
-</ol>
+    </mat-card>
 
+  </div>
+</div>-->
