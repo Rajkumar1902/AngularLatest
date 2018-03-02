@@ -6,6 +6,7 @@ import {CarrierComponent} from '../carrier/carrier.component';
 import {FreightforwarderComponent} from '../freightforwarder/freightforwarder.component';
 import {ShipmentsComponent} from '../shipments/shipments.component';
 import {ShipmentdetailComponent} from '../shipmentdetail/shipmentdetail.component';
+import {ShipmenttrackerComponent} from '../shipmenttracker/shipmenttracker.component';
 
 export const routes: Routes = [
     { path: 'home',  component: HomeComponent },
@@ -15,5 +16,6 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent},
     { path: 'shipments', component: ShipmentsComponent},
     { path: 'shipmentDetail/:id', component: ShipmentdetailComponent},
+    { path: 'shipmentTracker/:id', component: ShipmenttrackerComponent},
     { path: '', redirectTo: '/login', pathMatch: 'full' }
   ];

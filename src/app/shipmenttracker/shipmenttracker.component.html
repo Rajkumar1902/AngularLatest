@@ -1,0 +1,95 @@
+<div fxLayout="column" class="flex-container">
+
+  <div fxLayout="row" fxLayoutGap="10px"  class="flex-container">
+    <mat-card class="home-card" [routerLink]="['/shipmentDetail', shipment.shipmentId]">
+      <!-- <mat-card-header>
+         <mat-card-title>
+           <h3>Shipment Status</h3>
+         </mat-card-title>
+       </mat-card-header>-->
+      <div class="md-stepper-horizontal green">
+
+      <ul style="display: flex">
+        <li *ngFor="let leg of shipment.shipmentLegs" style="display:inline;">
+          <div class="{{ leg.shipmentLegStatus.toString() == 'DSTS_SL_D_DELIVERED' ? 'md-step active done' : 'md-step undone'}}">
+            <!--<div [ngClass]="leg.shipmentLegStatus.toString()  ==  shipmentLegStatus.DSTS_SL_D_DELIVERED ? 'md-step active done' : 'md-step'">-->
+            <div class="md-step-circle"><span></span></div>
+            <div class="md-step-title">
+              <small>{{ leg.shipmentLegStatus }}</small>
+              <br>
+              <small><b>{{ leg.shipFromLocation.city }}, {{ leg.shipFromLocation.country}}</b></small>
+              <br>
+              <small>{{ leg.actualArrivalDateTimeFromLocation | date}}</small>
+            </div>
+            <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD;left:0;right:50%;margin-right:20px;"></div>
+            <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD; right:0;left:50%;margin-left:20px;"></div>
+          </div>
+        </li>
+        <div class="{{ lastShipmentLeg.shipmentLegStatus.toString() == 'DSTS_SL_D_DELIVERED' ? 'md-step active done' : 'md-step undone'}}">
+          <div class="md-step-circle"><span></span></div>
+          <div class="md-step-title">
+            <small>{{ lastShipmentLeg.shipmentLegStatus }}</small>
+            <br>
+            <small><b>{{ lastShipmentLeg.shipToLocation.city }}, {{ lastShipmentLeg.shipToLocation.country}}</b></small>
+            <br>
+            <small>{{ lastShipmentLeg.actualArrivalDateTimeFromLocation | date}}</small>
+          </div>
+          <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD;left:0;right:50%;margin-right:20px;"></div>
+          <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD; right:0;left:50%;margin-left:20px;"></div>
+        </div>
+      </ul>
+      </div>
+
+      <!--<div class="md-stepper-horizontal orange">
+        <div class="md-step active done">
+          <div class="md-step-circle"><span>1</span></div>
+          <div class="md-step-title">
+            <small>Started from warehouse</small>
+            <br>
+            <small><b>HYDERABAD</b></small>
+            <br>
+            <small>8:00 AM</small>
+          </div>
+          <div class="md-step-bar-left"></div>
+          <div class="md-step-bar-right"></div>
+        </div>
+        <div class="md-step active done">
+          <div class="md-step-circle"><span>2</span></div>
+          <div class="md-step-title">
+            <small>Reached hub</small>
+            <br>
+            <small><b>CHENNAI</b></small>
+            <br>
+            <small>10:00 AM</small></div>
+          &lt;!&ndash;<div class="md-step-optional">Optional</div>&ndash;&gt;
+          <div class="md-step-bar-left"></div>
+          <div class="md-step-bar-right"></div>
+        </div>
+        <div class="md-step active done">
+          <div class="md-step-circle"><span>3</span></div>
+          <div class="md-step-title">
+            <small>Reached hub</small>
+            <br>
+            <small><b>BANGALORE</b></small>
+            <br>
+            <small>2:00 PM</small></div>
+          <div class="md-step-bar-left"></div>
+          <div class="md-step-bar-right"></div>
+        </div>
+        <div class="md-step">
+          <div class="md-step-circle"><span>4</span></div>
+          <div class="md-step-title">
+            <small>Reached destination</small>
+            <br>
+            <small><b>DELHI</b></small>
+            <br>
+            <small>6:00 PM</small></div>
+          <div class="md-step-bar-left"></div>
+          <div class="md-step-bar-right"></div>
+        </div>
+      </div>-->
+
+    </mat-card>
+
+  </div>
+</div>

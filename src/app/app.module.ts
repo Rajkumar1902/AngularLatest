@@ -48,6 +48,7 @@ import { CarrierComponent } from './carrier/carrier.component';
 import { FreightforwarderComponent } from './freightforwarder/freightforwarder.component';
 import { ShipmentsComponent } from './shipments/shipments.component';
 import { ShipmentdetailComponent } from './shipmentdetail/shipmentdetail.component';
+import { ShipmenttrackerComponent } from './shipmenttracker/shipmenttracker.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { ShipmentdetailComponent } from './shipmentdetail/shipmentdetail.compone
     FreightforwarderComponent,
     ShipmentsComponent,
     ShipmentdetailComponent,
+    ShipmenttrackerComponent,
   ],
 
   imports: [
