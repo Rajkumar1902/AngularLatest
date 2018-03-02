@@ -1,10 +1,11 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MatTableDataSource} from '@angular/material';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {Shipment} from '../shared/shipment';
 import { ShipperService } from '../services/shipper.service';
 import { Params, ActivatedRoute } from '@angular/router';
+import {MatTableDataSource, MatSort, MatPaginator} from '@angular/material';
 
 import 'rxjs/add/operator/switchMap';
+import {ShipmentLegs} from '../shared/shipmentlegs';
 
 @Component({
   selector: 'app-shipmentdetail',
@@ -13,10 +14,23 @@ import 'rxjs/add/operator/switchMap';
 })
 export class ShipmentdetailComponent implements OnInit {
 
+  displayedColumns = ['shipmentLegId', 'shipmentLegStatus', 'shipFromLocation', 'shipToLocation', 'computedArrivalDateTimeFromLocation',
+    'actualArrivalDateTimeFromLocation', 'computedDepartureDateTimeFromLocation', 'actualDepartureDateTimeFromLocation'/*, 'computedArrivalDateTimeToLocation',
+  'actualArrivalDateTimeToLocation', 'computedDepartureDateTimeToLocation', 'actualDepartureDateTimeToLocation'*/];
+  dataSource: MatTableDataSource<ShipmentLegs>;
   shipment: Shipment;
 
   errMess: string;
   count: number;
+
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+  }
 
   constructor(private shipperService: ShipperService,
               private route: ActivatedRoute,
@@ -29,9 +43,25 @@ export class ShipmentdetailComponent implements OnInit {
       })
       .subscribe(shipment => { this.shipment = shipment;
           console.log(this.shipment);
+          console.log(new Date(this.shipment.shipmentLegs[0].computedArrivalDateTimeFromLocation))
+          console.log(Math.round(new Date(this.shipment.shipmentLegs[0].computedArrivalDateTimeFromLocation)-new Date('2019-01-05T14:00:00.000Z'))/3600000);
+          console.log(new Date('2019-01-05T00:00:00.000Z'));
+          this.calculateArrivalDelay();
           this.count = this.shipment.shipmentLegs.length;
+          this.dataSource = new MatTableDataSource<ShipmentLegs>(this.shipment.shipmentLegs);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
           },
         errmess => this.errMess = <any>errmess);
+  }
+
+  calculateArrivalDelay(){
+    for (let shipmentLeg of this.shipment.shipmentLegs) {
+      //console.log(entry); // 1, "string", false
+     // console.log(Math.round(new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-new Date('2019-01-05T00:00:00.000Z'))/3600000);
+      shipmentLeg.arrivalDelay = Math.round(new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-new Date('2019-01-05T14:00:00.000Z'))/3600000;
+      console.log("calculating arrival delay"+shipmentLeg.arrivalDelay);
+    }
   }
   }
 

@@ -4,6 +4,7 @@ import { SHIPMENTS } from '../shared/TempData/shipments';
 import { Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import { RestangularModule, Restangular } from 'ngx-restangular';
+import {ShipmentLegs} from '../shared/shipmentlegs';
 
 @Injectable()
 export class ShipperService {
@@ -22,4 +23,11 @@ export class ShipperService {
     return this.restAngular.one('/api/Shipment', id).get();
     //return Observable.of(SHIPMENTS);
   }
+
+  /*getShipmentLegs(id: number): Observable<ShipmentLegs> {
+    console.log("inside shipment detail service call");
+    console.log(this.restAngular.one('/api/Shipment', id).get().getList({shipmentLegs}));
+    return this.restAngular.one('/api/Shipment', id).get();
+    //return Observable.of(SHIPMENTS);
+  }*/
 }

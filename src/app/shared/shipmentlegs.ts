@@ -1,10 +1,13 @@
 import {Location} from './location';
 import { ShipmentLegStatus} from './shipmentlegstatus';
+import {ShipperService} from '../services/shipper.service';
+import {Inject} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 export abstract class ShipmentLegs {
   shipmentLegId: string;
   shipmentSequenceNumber: number;
-  shipFromLocation: Location
+  shipFromLocation: Location;
   shipToLocation: Location;
   pickupArrivalDateTime: string;
   pickupDepartureDateTime: string;
@@ -19,5 +22,6 @@ export abstract class ShipmentLegs {
   actualDepartureDateTimeFromLocation: string;
   actualArrivalDateTimeToLocation: string;
   actualDepartureDateTimeToLocation: string;
+  arrivalDelay: number;
   // Load load optional
 }
