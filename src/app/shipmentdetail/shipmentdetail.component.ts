@@ -42,10 +42,6 @@ export class ShipmentdetailComponent implements OnInit {
         return this.shipperService.getShipment(+params['id']);
       })
       .subscribe(shipment => { this.shipment = shipment;
-          console.log(this.shipment);
-          console.log(new Date(this.shipment.shipmentLegs[0].computedArrivalDateTimeFromLocation))
-          console.log(Math.round(new Date(this.shipment.shipmentLegs[0].computedArrivalDateTimeFromLocation)-new Date('2019-01-05T14:00:00.000Z'))/3600000);
-          console.log(new Date('2019-01-05T00:00:00.000Z'));
           this.calculateArrivalDelay();
           this.count = this.shipment.shipmentLegs.length;
           this.dataSource = new MatTableDataSource<ShipmentLegs>(this.shipment.shipmentLegs);
@@ -59,7 +55,7 @@ export class ShipmentdetailComponent implements OnInit {
     for (let shipmentLeg of this.shipment.shipmentLegs) {
       //console.log(entry); // 1, "string", false
      // console.log(Math.round(new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-new Date('2019-01-05T00:00:00.000Z'))/3600000);
-      shipmentLeg.arrivalDelay = Math.round(new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-new Date('2019-01-05T14:00:00.000Z'))/3600000;
+      shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-<any>new Date('2019-01-05T14:00:00.000Z'))/3600000;
       console.log("calculating arrival delay"+shipmentLeg.arrivalDelay);
     }
   }
