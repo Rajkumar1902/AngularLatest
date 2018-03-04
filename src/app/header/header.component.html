@@ -5,16 +5,17 @@
     </button>-->
     <h1 class="example-app-name">Shipment Tracker</h1>
     <span class="flex-spacer"></span>
-
+    <h2 *ngIf="loginUser" class="loginUser">User: {{loginUser}}</h2>
+    <span style="padding-left: 10px"></span>
     <button mat-icon-button routerLink="/shipper">
-      <mat-icon matTooltip="Home">home</mat-icon>
+      <mat-icon *ngIf="loginUser" matTooltip="Home">home</mat-icon>
      </button>
-    <button mat-icon-button>
+    <button mat-icon-button *ngIf="loginUser">
       <mat-icon matTooltip="Notifications">notifications</mat-icon>
       <span class="notification">5</span>
     </button>
     <span style="padding-left: 10px"></span>
-    <button mat-icon-button routerLink="/login">
+    <button *ngIf="loginUser" mat-icon-button routerLink="/login" (click)="resetLoginUser()">
       <mat-icon matTooltip="Login">account_circle</mat-icon>
     </button>
 
