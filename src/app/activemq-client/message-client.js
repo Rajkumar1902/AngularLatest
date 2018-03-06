@@ -19,19 +19,55 @@ var url = 'c:\\blockchain\\lab\\TransportationManagerService.wsdl';
 var SchemaObject = require('node-schema-object');
 
 
+function createUpdateShipmentTrx(legTm, newLoadStatus,newShipStatus,eventName) {
 
+  var updateShipmentTx = new UpdateShipmentPickupDelivery();
+  updateShipmentTx.$class = "com.jda.shipment.visibility.UpdateShipmentPickupDelivery";
+  updateShipmentTx.shipment = "resource:com.jda.shipment.visibility.Shipment#"+legTm.SystemShipmentID;
+  updateShipmentTx.load = "resource:com.jda.shipment.visibility.Load#"+legTm.SystemLoadID;
+  updateShipmentTx.newLoadStatus = newLoadStatus;
 
+  updateShipmentTx.newShipmentStatus = newShipStatus;
+  updateShipmentTx.shipmentLegId = legTm.Id;
+  updateShipmentTx.newShipmentLegStatus = legTm.DisplayStatusEnumVal;
+
+  if(eventName == 'LoadStopConfirmed') {
+    if (legTm.PickupArrivalDateTime != null > 0)
+      updateShipmentTx.pickupArrivalDateTime = legTm.PickupArrivalDateTime;
+    if (legTm.PickupDepartureDateTime != null)
+      updateShipmentTx.pickupDepartureDateTime = legTm.PickupDepartureDateTime;
+  }
+  else {
+    if (legTm.DropArrivalDateTime != null > 0)
+      updateShipmentTx.dropArrivalDateTime = legTm.DropArrivalDateTime;
+    if (legTm.DropDepartureDateTime != null)
+      updateShipmentTx.dropDepartureDateTime = legTm.DropDepartureDateTime;
+  }
+  return updateShipmentTx;
+}
+function handleEachShipLeg(legTm,loadStatus,eventName) {
+  var shipArgs = {EntityType: "ShipmentType", Id: legTm.SystemShipmentID};
+
+  var shipCallback = function (result) {
+      var shipTM = result.Entity.Shipment[0];
+      var newShipmentStatus = shipTM.DisplayStatusEnumVal;
+      var updateShipmentTx = createUpdateShipmentTrx(legTm,loadStatus,newShipmentStatus,eventName);
+
+      console.log(JSON.stringify(updateShipmentTx));
+
+    writeToBlockChain(updateShipmentTx,'/api/UpdateShipmentPickupDelivery');
+    };
+  invokeSOAPCall(shipArgs, shipCallback);
+}
 stompClient.connect(function() {
 
   stompClient.subscribe(QUEUE, function (data, headers) {
     xml = data;
     var to_json = require('xmljson').to_json;
-    //var SchemaObject = require('node-schema-object');
 
     to_json(xml, function (error, data) {
-      //var eventName = data.CISDocument.EventName;
-       //var eventName = 'ShipmentProcessed'; //temp
-       var eventName = 'LoadTenderAccepted'; //temp
+     // var eventName = data.CISDocument.EventName;
+        var eventName = 'ShipmentDelivered';//ShipmentProcessed,LoadTenderAccepted,LoadStopConfirmed,ShipmentDelivered
 
       if (eventName == 'ShipmentProcessed') {
         //var args = {EntityType: "LoadType",Id: "39378"};
@@ -39,12 +75,9 @@ stompClient.connect(function() {
         //var args = {EntityType: "ShipmentType",Id: "161715"};
         //  var shipmentId = data.CISDocument.SystemShipmentID;
 
-        var args = {
-          EntityType: "ShipmentType",
-          Id: '159937',
-          Select: {Collection: [{Name: "ShipmentLeg"}, {Name: "Container"}]}
-        };
-        var fn = function (result) {
+        var args = {EntityType: "ShipmentType",Id: '150497',Select: {Collection: [{Name: "ShipmentLeg"}, {Name: "Container"}]}};
+
+        var callback = function (result) {
           console.log(result)
           var shipTM = result.Entity.Shipment[0];
           var shipmentAsset = fillShipment(shipTM);
@@ -52,27 +85,56 @@ stompClient.connect(function() {
           writeToBlockChain(shipmentAsset,'/api/Shipment');
 
         };
-        invokeSOAPCall(args, fn);
+        invokeSOAPCall(args, callback);
 
       } else if (eventName == 'LoadTenderAccepted') {
         // var args = {EntityType: "LoadType",Id: "39378"};
-        var args = {EntityType: "LoadType", Id: "85421", Select: {Collection: [{Name: "ShipmentLeg"}]}};
+        var args = {EntityType: "LoadType", Id: "76569", Select: {Collection: [{Name: "ShipmentLeg"}]}};
 
-        soap.createClient(url, function (err, client) {
-          client.setSecurity(new soap.BasicAuthSecurity('VENTURE', 'VENTURE'));
 
-          client.getEntity(args, function (err, result) {
-            var loadTM = result.Entity.Load[0];
-            var loadAsset = fillLoad(loadTM);
-            var assocateLoadTx = createAssociateLoadTransaction(loadAsset);
+        var callbackLoad = function (result) {
+          var loadTM = result.Entity.Load[0];
+          var loadAsset = fillLoad(loadTM);
+          var assocateLoadTx = createAssociateLoadTransaction(loadAsset);
 
-            var trxFn = function (result) {
-              writeToBlockChain(assocateLoadTx,'/api/AssociateLoadAndShipmentLegs');
-            };
+          var trxFn = function (result) {
+            writeToBlockChain(assocateLoadTx,'/api/AssociateLoadAndShipmentLegs');
+          };
 
-            writeToBlockChain(loadAsset,'/api/Load',trxFn); //create load asset in blockchain
-          });
-        });
+          writeToBlockChain(loadAsset,'/api/Load',trxFn); //create load asset in blockchain
+        };
+        invokeSOAPCall(args, callbackLoad);
+
+
+      }
+      else if(eventName == 'LoadStopConfirmed') {
+//        var leg = data.CISDocument.ShipmentLeg;
+    //    console.log(shipmentLegArrTm);
+         // var legId = leg.SystemShipmentLegID;
+         // console.log("leg: "+ legId);
+          //var shipmentId = leg.Shipment.SystemShipmentID;
+        var loadStatus = "LL_DINTRANS";//data.CISDocument.SystemLoadStatus;
+
+        var legArgs = {EntityType: "ShipmentLegType",Id: '100176875'};
+
+        var shipLegCallback = function (result) {
+          var legTm = result.Entity.ShipmentLeg[0];
+          handleEachShipLeg(legTm,loadStatus,eventName);
+        };
+        invokeSOAPCall(legArgs, shipLegCallback);
+
+      }
+      else if(eventName == 'ShipmentDelivered') {
+
+        var loadStatus = "LL_DINTRANS";//data.CISDocument.SystemLoadStatus;
+
+        var legArgs = {EntityType: "ShipmentLegType",Id: '100176875'};
+
+        var callback = function (result) {
+          var legTm = result.Entity.ShipmentLeg[0];
+          handleEachShipLeg(legTm,loadStatus,eventName);
+        };
+        invokeSOAPCall(legArgs, callback);
 
       }
     });
@@ -95,42 +157,43 @@ stompClient.connect(function() {
   }
 
 
-  function writeToBlockChain(asset, restUrl,postFn) {
-    console.log("starting : "+restUrl);
-    asset = JSON.stringify(asset);
-    var http = require('http');
-    var postheaders = {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(asset, 'utf8')
-    };
-    var optionspost = {
-      host: '35.200.243.178',
-      port: 3000,
-      path: restUrl,
-      method: 'POST',
-      headers: postheaders
-    };
 
-    var reqPost = http.request(optionspost, function (res) {
-      console.log("statusCode: ", res.statusCode);
-      res.on('data', function (d) {
-        console.log('POST result:\n');
-        process.stdout.write(d);
-        console.info('\n\nPOST completed'+restUrl);
-
-        if(postFn != null && postFn != undefined) {
-          postFn();
-        }
-      });
-    });
-
-    reqPost.write(asset);
-    reqPost.end();
-    reqPost.on('error', function (e) {
-      console.error(e);
-    });
-  }
 });
+function writeToBlockChain(asset, restUrl,postFn) {
+  console.log("starting : "+restUrl);
+  asset = JSON.stringify(asset);
+  var http = require('http');
+  var postheaders = {
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(asset, 'utf8')
+  };
+  var optionspost = {
+    host: '35.200.243.178',
+    port: 3000,
+    path: restUrl,
+    method: 'POST',
+    headers: postheaders
+  };
+
+  var reqPost = http.request(optionspost, function (res) {
+    console.log("statusCode: ", res.statusCode);
+    res.on('data', function (d) {
+      console.log('POST result:\n');
+      process.stdout.write(d);
+      console.info('\n\npost call completed for: '+restUrl);
+
+      if(postFn != null && postFn != undefined) {
+        postFn();
+      }
+    });
+  });
+
+  reqPost.write(asset);
+  reqPost.end();
+  reqPost.on('error', function (e) {
+    console.error(e);
+  });
+}
 
 function fillOnShipmentCreation(shipmentLegAsset, shipTm) {
   shipmentLegAsset.pickupArrivalDateTime = shipTm.PickupArrivalDateTime;
@@ -460,7 +523,11 @@ var UpdateShipmentPickupDelivery = new SchemaObject({
   newLoadStatus: String,
   newShipmentStatus: String,
   shipmentLegId: Number,
-  newShipmentLegStatus: String
+  newShipmentLegStatus: String,
+  pickupArrivalDateTime:String,
+  pickupDepartureDateTime:String,
+  dropArrivalDateTime:String,
+  dropDepartureDateTime:String
 });
 
 
