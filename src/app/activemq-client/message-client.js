@@ -19,24 +19,8 @@ var url = 'c:\\blockchain\\lab\\TransportationManagerService.wsdl';
 var SchemaObject = require('node-schema-object');
 
 
-function fillContainerInfo(loadTM) {
-  var containerInfoTM = new ShipmentContainerInfo();
-  containerInfoTM.$class = 'com.jda.shipment.visibility.ShipmentContainerInfo';
-  containerInfoTM.scaledWeight = loadTM.TotalScaledWeight;
-  containerInfoTM.volume = loadTM.TotalVolume;
-  //containerInfoTM.orderValue = loadTM.TotalVrderValue;
-  containerInfoTM.declaredValue = loadTM.TotalDeclaredValue;
-  containerInfoTM.tareWeight = loadTM.TotalTareWeight;
-  containerInfoTM.pieces = loadTM.TotalPieces;
-  containerInfoTM.skids = loadTM.TotalSkids;
-  containerInfoTM.volume = loadTM.TotalVolume;
 
-  containerInfoTM.flexibleQuantity1 = loadTM.TotalFlexibleQuantity1;
-  containerInfoTM.flexibleQuantity2 = loadTM.TotalFlexibleQuantity2;
-  containerInfoTM.flexibleQuantity3 = loadTM.TotalFlexibleQuantity3;
-  containerInfoTM.flexibleQuantity4 = loadTM.TotalFlexibleQuantity4;
-  return containerInfoTM;
-}
+
 stompClient.connect(function() {
 
   stompClient.subscribe(QUEUE, function (data, headers) {
@@ -46,8 +30,8 @@ stompClient.connect(function() {
 
     to_json(xml, function (error, data) {
       //var eventName = data.CISDocument.EventName;
-      //var eventName = 'ShipmentProcessed'; //temp
-      var eventName = 'LoadTenderAccepted'; //temp
+       //var eventName = 'ShipmentProcessed'; //temp
+       var eventName = 'LoadTenderAccepted'; //temp
 
       if (eventName == 'ShipmentProcessed') {
         //var args = {EntityType: "LoadType",Id: "39378"};
@@ -57,37 +41,36 @@ stompClient.connect(function() {
 
         var args = {
           EntityType: "ShipmentType",
-          Id: "161715",
+          Id: '159937',
           Select: {Collection: [{Name: "ShipmentLeg"}, {Name: "Container"}]}
         };
-        soap.createClient(url, function (err, client) {
-          client.setSecurity(new soap.BasicAuthSecurity('VENTURE', 'VENTURE'));
+        var fn = function (result) {
+          console.log(result)
+          var shipTM = result.Entity.Shipment[0];
+          var shipmentAsset = fillShipment(shipTM);
 
-          client.getEntity(args, function (err, result) {
-            //console.log(JSON.stringify(result));
-            var shipTM = result.Entity.Shipment[0];
-            // console.log("tmShip>> ",shipTM);
-            var shipmentAsset = fillShipment(shipTM);
+          writeToBlockChain(shipmentAsset,'/api/Shipment');
 
-            // writeToBlockChain(shipmentAsset,'/api/Shipment');
-            console.log(shipmentAsset);
-          });
-        });
+        };
+        invokeSOAPCall(args, fn);
 
       } else if (eventName == 'LoadTenderAccepted') {
         // var args = {EntityType: "LoadType",Id: "39378"};
-        var args = {EntityType: "LoadType", Id: "86402", Select: {Collection: [{Name: "ShipmentLeg"}]}};
+        var args = {EntityType: "LoadType", Id: "85421", Select: {Collection: [{Name: "ShipmentLeg"}]}};
+
         soap.createClient(url, function (err, client) {
           client.setSecurity(new soap.BasicAuthSecurity('VENTURE', 'VENTURE'));
 
           client.getEntity(args, function (err, result) {
-
             var loadTM = result.Entity.Load[0];
             var loadAsset = fillLoad(loadTM);
-            console.log(loadAsset);
+            var assocateLoadTx = createAssociateLoadTransaction(loadAsset);
 
-            writeToBlockChain(loadAsset,'/api/Load');
+            var trxFn = function (result) {
+              writeToBlockChain(assocateLoadTx,'/api/AssociateLoadAndShipmentLegs');
+            };
 
+            writeToBlockChain(loadAsset,'/api/Load',trxFn); //create load asset in blockchain
           });
         });
 
@@ -111,139 +94,17 @@ stompClient.connect(function() {
     return load;
   }
 
-  function fillShipment(shipTM) {
 
-    //  console.log(shipment.ShipmentNumber);
-
-    var shipment = new Shipment();
-    shipment.$class = 'com.jda.shipment.visibility.Shipment';
-    shipment.shipmentId = shipTM.SystemShipmentID;
-    shipment.shipmentStatus = 'DSTS_SHPM_D_PROCESSING';//data.CISDocument.EventName;
-    // shipment.freightTerms = 'FT_COLLECT';//data.CISDocument.FreightTerm;
-    shipment.pickupFromDateTime = shipTM.PickupFromDateTime;
-    shipment.pickupToDateTime = shipTM.PickupToDateTime;
-    shipment.deliveryFromDateTime = shipTM.DeliveryFromDateTime;
-    shipment.deliveryToDateTime = shipTM.DeliveryToDateTime;
-    shipment.commodityCode = shipTM.CommodityCode;
-    shipment.unitOfMeasure = shipTM.unitOfMeasure;//Model needs to be changed
-    shipment.pickupArrivalDateTime = shipTM.PickupFromDateTime;
-    shipment.pickupDepartureDateTime = shipTM.PickupToDateTime;
-    shipment.dropArrivalDateTime = shipTM.DeliveryFromDateTime;
-    shipment.dropDepartureDateTime = shipTM.DeliveryToDateTime;
-
-    var shipFromLocation = new Location();
-    shipFromLocation.$class = 'com.jda.shipment.visibility.Location';
-    shipFromLocation.locationCode = shipTM.ShipFromLocationCode;
-    // console.log(shipTM.ShipFromAddress);
-    fillAddress(shipFromLocation, shipTM.ShipFromAddress);
-    shipment.shipFromLocation = shipFromLocation;
-
-    //console.log(shipFromLocation);
-
-    var shipToLocation = new Location();
-    shipToLocation.$class = 'com.jda.shipment.visibility.Location';
-    shipToLocation.locationCode = shipTM.ShipToLocationCode;
-    fillAddress(shipToLocation, shipTM.ShipToAddress);
-    shipment.shipToLocation = shipToLocation;
-
-    var shipmentLegs = fillShipmentLegs(shipTM.ShipmentLeg, shipTM);
-    shipment.shipmentLegs = shipmentLegs;
-
-    return shipment;
-
-  }
-
-  function fillAddress(location, shipFromAddress) {
-    location.city = shipFromAddress.City;
-    location.country = shipFromAddress.CountryCode;
-    //  shipFromLocation.locality = shipTM.OriginShippingLocationName;
-    //shipFromLocation.region = data.CISDocument.OriginAddress. //not available
-    //  location.street = shipFromAddress.Street;
-    //shipFromLocation.street2 = shipTM.OriginAddress.OriginBlock;
-    // shipFromLocation.street3 = data.CISDocument.OriginAddress. //not available
-    location.stateCode = shipFromAddress.State;//Added newly
-    location.postalCode = shipFromAddress.PostalCode;
-    location.latitude = shipFromAddress.Latitude;
-    location.longitude = shipFromAddress.Longitude;
-
-  }
-
-
-  function fillShipmentLegsForLoad(shipmentLegs) {
-    var shipmentLegAssets = [];
-    for (i = 0; i < shipmentLegs.length; i++) {
-      var shipmentLegTm = shipmentLegs[i];
-      var shipmentLegAsset = new ShipmentLeg();
-      shipmentLegAsset.$class = "com.jda.shipment.visibility.ShipmentLegs";
-      shipmentLegAsset.shipmentLegId = shipmentLegTm.Id;
-      shipmentLegAsset.shipmentSequenceNumber = shipmentLegTm.ShipmentSequenceNumber;
-      shipmentLegAsset.shipmentLegStatus = shipmentLegTm.DisplayStatusEnumVal;
-      //shipmentLegAsset.carrierCode =
-
-      var shipLegFromLocation = new Location();
-      shipLegFromLocation.$class = 'com.jda.shipment.visibility.Location';
-      shipLegFromLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
-      fillAddress(shipLegFromLocation, shipmentLegTm.ShipFromAddress);
-
-      shipmentLegAsset.shipFromLocation = shipLegFromLocation;
-
-      var shipLegToLocation = new Location();
-      shipLegToLocation.$class = 'com.jda.shipment.visibility.Location';
-      shipLegToLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
-      fillAddress(shipLegToLocation, shipmentLegTm.ShipToAddress);
-
-      shipmentLegAsset.shipToLocation = shipLegToLocation;
-
-      fillOnLoadAccept(shipmentLegAsset, shipmentLegTm);
-
-      shipmentLegAssets[i] = shipmentLegAsset;
-    }
-    return shipmentLegAssets;
-  }
-  function fillShipmentLegs(shipmentLegs, shipTm) {
-    var shipmentLegAssets = [];
-    for (i = 0; i < shipmentLegs.length; i++) {
-      var shipmentLegTm = shipmentLegs[i];
-      var shipmentLegAsset = new ShipmentLeg();
-      shipmentLegAsset.$class = "com.jda.shipment.visibility.ShipmentLegs";
-      shipmentLegAsset.shipmentLegId = shipmentLegTm.Id;
-      shipmentLegAsset.shipmentSequenceNumber = shipmentLegTm.ShipmentSequenceNumber;
-      shipmentLegAsset.shipmentLegStatus = shipmentLegTm.DisplayStatusEnumVal;
-      //shipmentLegAsset.carrierCode =
-
-      var shipLegFromLocation = new Location();
-      shipLegFromLocation.$class = 'com.jda.shipment.visibility.Location';
-      shipLegFromLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
-      fillAddress(shipLegFromLocation, shipmentLegTm.ShipFromAddress);
-
-      shipmentLegAsset.shipFromLocation = shipLegFromLocation;
-
-      var shipLegToLocation = new Location();
-      shipLegToLocation.$class = 'com.jda.shipment.visibility.Location';
-      shipLegToLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
-      fillAddress(shipLegToLocation, shipmentLegTm.ShipToAddress);
-
-      shipmentLegAsset.shipToLocation = shipLegToLocation;
-
-      fillOnShipmentCreation(shipmentLegAsset, shipTm);
-
-
-      shipmentLegAssets[i] = shipmentLegAssets;
-
-    }
-    return shipmentLegAssets;
-  }
-
-  function writeToBlockChain(asset, restUrl) {
+  function writeToBlockChain(asset, restUrl,postFn) {
+    console.log("starting : "+restUrl);
     asset = JSON.stringify(asset);
-    //  console.log(asset)
     var http = require('http');
     var postheaders = {
       'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(asset, 'utf8')
     };
     var optionspost = {
-      host: '35.200.212.213',
+      host: '35.200.243.178',
       port: 3000,
       path: restUrl,
       method: 'POST',
@@ -255,7 +116,11 @@ stompClient.connect(function() {
       res.on('data', function (d) {
         console.log('POST result:\n');
         process.stdout.write(d);
-        console.info('\n\nPOST completed');
+        console.info('\n\nPOST completed'+restUrl);
+
+        if(postFn != null && postFn != undefined) {
+          postFn();
+        }
       });
     });
 
@@ -268,10 +133,10 @@ stompClient.connect(function() {
 });
 
 function fillOnShipmentCreation(shipmentLegAsset, shipTm) {
-  shipmentLegAsset.pickupArrivalDateTime = shipmentLegTm.PickupArrivalDateTime;
-  shipmentLegAsset.pickupDepartureDateTime = shipmentLegTm.PickupDepartureDateTime;
-  shipmentLegAsset.dropArrivalDateTime = shipmentLegTm.DropArrivalDateTime;
-  shipmentLegAsset.dropDepartureDateTime = shipmentLegTm.DropDepartureDateTime;
+  shipmentLegAsset.pickupArrivalDateTime = shipTm.PickupArrivalDateTime;
+  shipmentLegAsset.pickupDepartureDateTime = shipTm.PickupDepartureDateTime;
+  shipmentLegAsset.dropArrivalDateTime = shipTm.DropArrivalDateTime;
+  shipmentLegAsset.dropDepartureDateTime = shipTm.DropDepartureDateTime;
 }
 
 function fillOnLoadAccept(shipmentLegAsset, shipmentLegTm) {
@@ -291,6 +156,195 @@ function fillActualTime(shipmentLegAsset, shipmentLegTm) {
 
 
 }
+function fillShipment(shipTM) {
+
+  //  console.log(shipment.ShipmentNumber);
+
+  var shipment = new Shipment();
+  shipment.$class = 'com.jda.shipment.visibility.Shipment';
+  shipment.shipmentId = shipTM.SystemShipmentID;
+  shipment.shipmentStatus = 'DSTS_SHPM_D_PROCESSING';//data.CISDocument.EventName;
+  // shipment.freightTerms = 'FT_COLLECT';//data.CISDocument.FreightTerm;
+  shipment.pickupFromDateTime = shipTM.PickupFromDateTime;
+  shipment.pickupToDateTime = shipTM.PickupToDateTime;
+  shipment.deliveryFromDateTime = shipTM.DeliveryFromDateTime;
+  shipment.deliveryToDateTime = shipTM.DeliveryToDateTime;
+  shipment.commodityCode = shipTM.CommodityCode;
+  shipment.unitOfMeasure = shipTM.unitOfMeasure;//Model needs to be changed
+  shipment.pickupArrivalDateTime = shipTM.PickupFromDateTime;
+  shipment.pickupDepartureDateTime = shipTM.PickupToDateTime;
+  shipment.dropArrivalDateTime = shipTM.DeliveryFromDateTime;
+  shipment.dropDepartureDateTime = shipTM.DeliveryToDateTime;
+
+  var shipFromLocation = new Location();
+  shipFromLocation.$class = 'com.jda.shipment.visibility.Location';
+  shipFromLocation.locationCode = shipTM.ShipFromLocationCode;
+  // console.log(shipTM.ShipFromAddress);
+  fillAddress(shipFromLocation, shipTM.ShipFromAddress);
+  shipment.shipFromLocation = shipFromLocation;
+
+  //console.log(shipFromLocation);
+
+  var shipToLocation = new Location();
+  shipToLocation.$class = 'com.jda.shipment.visibility.Location';
+  shipToLocation.locationCode = shipTM.ShipToLocationCode;
+  fillAddress(shipToLocation, shipTM.ShipToAddress);
+  shipment.shipToLocation = shipToLocation;
+
+  var shipmentLegs = fillShipmentLegs(shipTM.ShipmentLeg, shipTM);
+  shipment.shipmentLegs = shipmentLegs;
+
+
+  return shipment;
+
+}
+
+function fillAddress(location, shipFromAddress) {
+  location.city = shipFromAddress.City;
+  location.country = shipFromAddress.CountryCode;
+  //  shipFromLocation.locality = shipTM.OriginShippingLocationName;
+  //shipFromLocation.region = data.CISDocument.OriginAddress. //not available
+  //  location.street = shipFromAddress.Street;
+  //shipFromLocation.street2 = shipTM.OriginAddress.OriginBlock;
+  // shipFromLocation.street3 = data.CISDocument.OriginAddress. //not available
+  location.stateCode = shipFromAddress.State;//Added newly
+  location.postalCode = shipFromAddress.PostalCode;
+  location.latitude = shipFromAddress.Latitude;
+  location.longitude = shipFromAddress.Longitude;
+
+}
+
+
+function fillShipmentLegsForLoad(shipmentLegs) {
+  var shipmentLegAssets = [];
+  for (i = 0; i < shipmentLegs.length; i++) {
+    var shipmentLegTm = shipmentLegs[i];
+    var shipmentLegAsset = new ShipmentLeg();
+    shipmentLegAsset.$class = "com.jda.shipment.visibility.ShipmentLegs";
+    shipmentLegAsset.shipmentLegId = shipmentLegTm.Id;
+    shipmentLegAsset.shipmentId = shipmentLegTm.SystemShipmentID;
+    shipmentLegAsset.shipmentSequenceNumber = shipmentLegTm.ShipmentSequenceNumber;
+    shipmentLegAsset.shipmentLegStatus = shipmentLegTm.DisplayStatusEnumVal;
+    //shipmentLegAsset.carrierCode =
+
+    var shipLegFromLocation = new Location();
+    shipLegFromLocation.$class = 'com.jda.shipment.visibility.Location';
+    shipLegFromLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
+    fillAddress(shipLegFromLocation, shipmentLegTm.ShipFromAddress);
+
+    shipmentLegAsset.shipFromLocation = shipLegFromLocation;
+
+    var shipLegToLocation = new Location();
+    shipLegToLocation.$class = 'com.jda.shipment.visibility.Location';
+    shipLegToLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
+    fillAddress(shipLegToLocation, shipmentLegTm.ShipToAddress);
+
+    shipmentLegAsset.shipToLocation = shipLegToLocation;
+
+    fillOnLoadAccept(shipmentLegAsset, shipmentLegTm);
+
+    shipmentLegAssets[i] = shipmentLegAsset;
+  }
+  return shipmentLegAssets;
+}
+function fillShipmentLegs(shipmentLegs, shipTm) {
+  var shipmentLegAssetArr = [];
+  for (i = 0; i < shipmentLegs.length; i++) {
+    var shipmentLegTm = shipmentLegs[i];
+    var shipmentLegAsset = new ShipmentLeg();
+    shipmentLegAsset.$class = "com.jda.shipment.visibility.ShipmentLegs";
+    shipmentLegAsset.shipmentLegId = shipmentLegTm.Id;
+    shipmentLegAsset.shipmentSequenceNumber = shipmentLegTm.ShipmentSequenceNumber;
+    shipmentLegAsset.shipmentLegStatus = shipmentLegTm.DisplayStatusEnumVal;
+    //shipmentLegAsset.carrierCode =
+
+    var shipLegFromLocation = new Location();
+    shipLegFromLocation.$class = 'com.jda.shipment.visibility.Location';
+    shipLegFromLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
+    fillAddress(shipLegFromLocation, shipmentLegTm.ShipFromAddress);
+
+    shipmentLegAsset.shipFromLocation = shipLegFromLocation;
+
+    var shipLegToLocation = new Location();
+    shipLegToLocation.$class = 'com.jda.shipment.visibility.Location';
+    shipLegToLocation.locationCode = shipmentLegTm.ShipFromLocationCode;
+    fillAddress(shipLegToLocation, shipmentLegTm.ShipToAddress);
+
+    shipmentLegAsset.shipToLocation = shipLegToLocation;
+
+    fillOnShipmentCreation(shipmentLegAsset, shipTm);
+
+
+    shipmentLegAssetArr[i] = shipmentLegAsset;
+
+  }
+  return shipmentLegAssetArr;
+}
+
+function fillContainerInfo(loadTM) {
+  var containerInfoTM = new ShipmentContainerInfo();
+  containerInfoTM.$class = 'com.jda.shipment.visibility.ShipmentContainerInfo';
+  containerInfoTM.scaledWeight = loadTM.TotalScaledWeight;
+  containerInfoTM.volume = loadTM.TotalVolume;
+  //containerInfoTM.orderValue = loadTM.TotalVrderValue;
+  containerInfoTM.declaredValue = loadTM.TotalDeclaredValue;
+  containerInfoTM.tareWeight = loadTM.TotalTareWeight;
+  containerInfoTM.pieces = loadTM.TotalPieces;
+  containerInfoTM.skids = loadTM.TotalSkids;
+  containerInfoTM.volume = loadTM.TotalVolume;
+
+  containerInfoTM.flexibleQuantity1 = loadTM.TotalFlexibleQuantity1;
+  containerInfoTM.flexibleQuantity2 = loadTM.TotalFlexibleQuantity2;
+  containerInfoTM.flexibleQuantity3 = loadTM.TotalFlexibleQuantity3;
+  containerInfoTM.flexibleQuantity4 = loadTM.TotalFlexibleQuantity4;
+  return containerInfoTM;
+}
+function prepareShipmentArray(loadAsset, assocateLoadTx) {
+
+  var shipmentLegs = loadAsset.shipmentLegs;
+
+  var shipmentArr = getUniqueShipments(shipmentLegs);
+  for (shipmentIdVal in shipmentArr) {
+    var shipRef = "resource:com.jda.shipment.visibility.Shipment#"+shipmentArr[shipmentIdVal];
+    assocateLoadTx.shipmentArr.push(shipRef);
+  }
+
+  function getUniqueShipments(shipmentLegs){
+    var shipmentArr = [];
+    for (i = 0; i < shipmentLegs.length; i++) {
+      var shipmentLeg = shipmentLegs[i];
+      var shipmentId = shipmentLeg.shipmentId;
+      if (shipmentArr.indexOf(shipmentId) == -1 ) {
+        shipmentArr.push(shipmentId);
+      }
+    }
+
+    return shipmentArr;
+  }
+
+}
+function createAssociateLoadTransaction(loadAsset) {
+
+  var assocateLoadTx = new AssociateLoadAndShipmentLegs();
+  assocateLoadTx.$class="com.jda.shipment.visibility.AssociateLoadAndShipmentLegs";
+  assocateLoadTx.load='"resource:com.jda.shipment.visibility.Load#'+loadAsset.loadId;
+
+  prepareShipmentArray(loadAsset,assocateLoadTx);
+
+  // console.log(assocateLoadTx);
+  return assocateLoadTx;
+}
+function invokeSOAPCall(args, fn) {
+  soap.createClient(url, function (err, client) {
+    client.setSecurity(new soap.BasicAuthSecurity('VENTURE', 'VENTURE'));
+
+    client.getEntity(args, function (err, result) {
+      fn(result);
+
+    });
+  });
+}
+
 
 var Location = new SchemaObject({
   $class: "com.jda.shipment.visibility.Location",
@@ -312,7 +366,7 @@ var Shipment = new SchemaObject({
   $class: "com.jda.shipment.visibility.Shipment",
   shipmentId: String,
   shipmentStatus: String,
-  shipmentLegs: [ShipmentLeg],
+  shipmentLegs: [],
   freightTerms: String,
   pickupFromDateTime: String,
   pickupToDateTime: String,
@@ -334,7 +388,8 @@ var Shipment = new SchemaObject({
 var ShipmentLeg = new SchemaObject(
   {
     $class: "com.jda.shipment.visibility.ShipmentLegs",
-    shipmentLegId: String,
+    shipmentLegId: Number,
+    shipmentId: Number,
     shipmentSequenceNumber: String,
     shipFromLocation: Location,
     shipToLocation: Location,
@@ -394,7 +449,7 @@ var Load = new SchemaObject(
 //transaction classes
 var AssociateLoadAndShipmentLegs = new SchemaObject({
   $class: "com.jda.shipment.visibility.AssociateLoadAndShipmentLegs",
-  shipmentArr:[Shipment],
+  shipmentArr:[String],
   load: String //"load": "resource:com.jda.shipment.visibility.Load#4185"
 });
 
