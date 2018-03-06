@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { DataService} from '../services/data.service';
 
 @Component({
   selector: 'app-login',
@@ -9,6 +10,7 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
 
   players;
+  loginUser: string;
 
   routerLink: String;
 
@@ -32,7 +34,7 @@ export class LoginComponent implements OnInit {
     {value: '0', viewValue: 'Freight Forwarder 1'},
     {value: '1', viewValue: 'Freight Forwarder 2'},
   ];
-  constructor(private router: Router) { }
+  constructor(private router: Router, private data: DataService) { }
 
   ngOnInit() {
   }
@@ -49,6 +51,16 @@ export class LoginComponent implements OnInit {
       this.routerLink = '/freightforwarder';
     }
     return this.players;
+  }
+
+  setPlayer(player){
+    this.loginUser = player.viewValue;
+    //console.log(this.loginUser);
+    //this.data.changeMessage(player.viewValue);
+  }
+
+  setLoginUser(){
+    this.data.changeMessage(this.loginUser);
   }
 
 

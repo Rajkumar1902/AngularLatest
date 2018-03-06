@@ -15,7 +15,7 @@
     <!-- ShipmentId Column -->
     <ng-container matColumnDef="shipmentId">
       <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> ShipmentID </mat-header-cell>
-      <mat-cell *matCellDef="let element" [routerLink]="['/shipmentDetail', element.shipmentId]">
+      <mat-cell *matCellDef="let element" [routerLink]="['/shipmentTracker', element.shipmentId]">
         <button mat-button >
           <span style="font-size: x-small;">{{element.shipmentId}}</span>
         </button>

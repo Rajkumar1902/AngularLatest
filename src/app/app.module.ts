@@ -48,6 +48,8 @@ import { CarrierComponent } from './carrier/carrier.component';
 import { FreightforwarderComponent } from './freightforwarder/freightforwarder.component';
 import { ShipmentsComponent } from './shipments/shipments.component';
 import { ShipmentdetailComponent } from './shipmentdetail/shipmentdetail.component';
+import { ShipmenttrackerComponent } from './shipmenttracker/shipmenttracker.component';
+import {DataService} from './services/data.service';
 
 @NgModule({
   declarations: [
@@ -60,6 +62,7 @@ import { ShipmentdetailComponent } from './shipmentdetail/shipmentdetail.compone
     FreightforwarderComponent,
     ShipmentsComponent,
     ShipmentdetailComponent,
+    ShipmenttrackerComponent,
   ],
 
   imports: [
@@ -87,7 +90,7 @@ import { ShipmentdetailComponent } from './shipmentdetail/shipmentdetail.compone
     MatTooltipModule
    ],
   providers: [
-    ShipperService, {provide: 'BaseURL', useValue: baseURL},
+    ShipperService, DataService, {provide: 'BaseURL', useValue: baseURL},
   ],
   bootstrap: [AppComponent]
 })
