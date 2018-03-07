@@ -3,10 +3,13 @@
    <!-- <button mat-icon-button (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>-->
-    <h1 class="example-app-name">Shipment Tracker</h1>
-    <span class="flex-spacer"></span>
-    <h2 *ngIf="loginUser" class="loginUser">User: {{loginUser}}</h2>
+    <img md-card-image src="assets\images\Butterfly.png" style="height: 40px">
+    <button mat-fab class="image"
+            [style.backgroundImage]="'url(assets/images/Butterfly.png)'">
+    </button>
     <span style="padding-left: 10px"></span>
+    <h1 class="example-app-name">Mantis</h1>
+    <span class="flex-spacer"></span>
     <button mat-icon-button routerLink="/shipper">
       <mat-icon *ngIf="loginUser" matTooltip="Home">home</mat-icon>
      </button>
@@ -18,7 +21,7 @@
     <button *ngIf="loginUser" mat-icon-button routerLink="/login" (click)="resetLoginUser()">
       <mat-icon matTooltip="Login">account_circle</mat-icon>
     </button>
-
+    <h2 *ngIf="loginUser" class="loginUser">{{loginUser}}</h2>
   </mat-toolbar>
 
   <mat-sidenav-container class="" fxFlex="">

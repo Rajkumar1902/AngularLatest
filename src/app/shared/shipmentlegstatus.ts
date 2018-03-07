@@ -11,3 +11,4 @@ export enum ShipmentLegStatus {
   DSTS_SL_D_CLOSED,
   DSTS_SL_D_LLPURGED,
 }
+

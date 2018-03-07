@@ -26,3 +26,16 @@
   font-size: small;
   font-weight: bold;
 }
+
+button {
+  &.image {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    width: 30px;
+    height: 30px;
+    cursor: auto;
+
+  }
+}

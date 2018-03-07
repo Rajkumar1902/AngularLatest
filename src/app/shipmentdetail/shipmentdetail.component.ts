@@ -1,5 +1,6 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {Shipment} from '../shared/shipment';
+import {ShipmentLegStatus} from '../shared/shipmentlegstatus';
 import { ShipperService } from '../services/shipper.service';
 import { Params, ActivatedRoute } from '@angular/router';
 import {MatTableDataSource, MatSort, MatPaginator} from '@angular/material';
@@ -19,6 +20,8 @@ export class ShipmentdetailComponent implements OnInit {
   'actualArrivalDateTimeToLocation', 'computedDepartureDateTimeToLocation', 'actualDepartureDateTimeToLocation'*/];
   dataSource: MatTableDataSource<ShipmentLegs>;
   shipment: Shipment;
+  shipmentLegStatus: ShipmentLegStatus.DSTS_SL_D_DELIVERED;
+  panelOpenState = false;
 
   errMess: string;
   count: number;
@@ -34,7 +37,9 @@ export class ShipmentdetailComponent implements OnInit {
 
   constructor(private shipperService: ShipperService,
               private route: ActivatedRoute,
-              @Inject('BaseURL') private BaseURL) { }
+              @Inject('BaseURL') private BaseURL) {
+    console.log('***********************'+ this.shipmentLegStatus);
+  }
 
   ngOnInit() {
     this.route.params
@@ -51,12 +56,12 @@ export class ShipmentdetailComponent implements OnInit {
         errmess => this.errMess = <any>errmess);
   }
 
-  calculateArrivalDelay(){
-    for (let shipmentLeg of this.shipment.shipmentLegs) {
+  calculateArrivalDelay() {
+    for (const shipmentLeg of this.shipment.shipmentLegs) {
       //console.log(entry); // 1, "string", false
      // console.log(Math.round(new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-new Date('2019-01-05T00:00:00.000Z'))/3600000);
-      shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-<any>new Date('2019-01-05T14:00:00.000Z'))/3600000;
-      console.log("calculating arrival delay"+shipmentLeg.arrivalDelay);
+      shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date('2019-01-05T14:00:00.000Z')) / 3600000;
+      console.log('calculating arrival delay' + shipmentLeg.arrivalDelay);
     }
   }
   }

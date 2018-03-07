@@ -7,7 +7,7 @@
   </div>
 
 
-  <mat-table #table [dataSource]="dataSource" matSort>
+  <mat-table #table [dataSource]="dataSource" matSort matSortActive="shipmentId" matSortDirection="asc" matSortDisableClear>
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
@@ -15,29 +15,40 @@
     <!-- ShipmentId Column -->
     <ng-container matColumnDef="shipmentId">
       <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> ShipmentID </mat-header-cell>
-      <mat-cell *matCellDef="let element" [routerLink]="['/shipmentTracker', element.shipmentId]">
+      <mat-cell *matCellDef="let element"  [routerLink]="['/shipmentTracker', element.shipmentId]">
         <button mat-button >
           <span style="font-size: x-small;">{{element.shipmentId}}</span>
         </button>
       </mat-cell>
     </ng-container>
-
     <ng-container matColumnDef="shipmentStatus">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <span>{{element.shipmentStatus}}</span>
+      <mat-cell *matCellDef="let element" [ngSwitch]="element.shipmentStatus">
+        <span *ngSwitchCase="'DSTS_SHPM_D_PROCESSING'">Processing</span>
+        <span *ngSwitchCase="'DSTS_SHPM_D_IN_TRANSIT'">In Tranist</span>
+        <span *ngSwitchCase="'DSTS_SHPM_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
+        <span *ngSwitchCase="'DSTS_SHPM_D_DELIVERED'">Delivered</span>
+        <span *ngSwitchDefault>{{element.shipmentStatus}}</span>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="shipFromLocation">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Ship From</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.shipFromLocation.locationCode}} </mat-cell>
+      <mat-cell *matCellDef="let element">
+        <span *ngIf="element.shipFromLocation!=null">
+        {{element.shipFromLocation.locationCode}}
+        </span>
+      </mat-cell>
     </ng-container>
 
     <!-- Status Column -->
-    <ng-container matColumnDef="shipToLocation">
+   <ng-container matColumnDef="shipToLocation">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Ship To</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.shipToLocation.locationCode}} </mat-cell>
+      <mat-cell *matCellDef="let element">
+         <span *ngIf="element.shipToLocation!=null">
+        {{element.shipToLocation.locationCode}}
+         </span>
+      </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="pickupFromDateTime">
