@@ -42,12 +42,8 @@ export class ShipmentsComponent implements OnInit {
               @Inject('BaseURL') private BaseURL) { }
 
   ngOnInit() {
+    this.loadGrid();
 
-    this.shipperService.getShipments().subscribe(shipments => {this.shipments = shipments;
-      this.dataSource = new MatTableDataSource<Shipment>(/*SHIPMENTS*/this.shipments);
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
-    });
     /*let tempList = [];
     return this.shipperService.getShipments()
       .toPromise()
@@ -58,6 +54,18 @@ export class ShipmentsComponent implements OnInit {
         this.shipments = tempList;
         console.log(this.shipments);
       });*/
+  }
+
+  refresh(){
+    this.loadGrid();
+  }
+
+  loadGrid(){
+    this.shipperService.getShipments().subscribe(shipments => {this.shipments = shipments;
+      this.dataSource = new MatTableDataSource<Shipment>(/*SHIPMENTS*/this.shipments);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+    });
   }
 
 }

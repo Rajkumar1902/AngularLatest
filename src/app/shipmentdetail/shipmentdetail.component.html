@@ -1,31 +1,14 @@
-
-<!--
-No of Shipment Legs: {{count}}
-<br>
-shipmentLeg1
-<br>
-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
-<br>
-shipmentLegId:{{shipment.shipmentLegs[0].shipmentLegId}}
-<br>
-shipmentFrom:{{shipment.shipFromLocation.city}}
-<br>
-shipmentTo:{{shipment.shipToLocation.city}}
-<br>
-ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFromLocation| date}}-{{shipment.shipmentLegs[0].actualArrivalDateTimeFromLocation| date}}
-
--->
-
 <!--<div class="example-container" fxLayout="column" fxLayoutAlign="top stretch">-->
 
 <mat-toolbar *ngIf="shipment!=null">
   <h2>Shipment Info: {{shipment.shipmentId}}</h2>
   <span class="flex-spacer"></span>
   <button mat-icon-button [routerLink]="['/shipmentTracker', shipment.shipmentId]">
-    <mat-icon matTooltip="Summary View" style="background-color: #00a9e0;; border-radius: 50px; color: white">linear_scale</mat-icon>
+    <mat-icon matTooltip="Summary View">linear_scale</mat-icon>
+    <!--style="background-color: #00a9e0;; border-radius: 50px; color: white"-->
   </button>
   <button mat-icon-button routerLink="/shipments">
-    <mat-icon matTooltip="Back To Shipments" style="background-color: #00a9e0;; border-radius: 50px; color: white">keyboard_arrow_left</mat-icon>
+    <mat-icon matTooltip="Back To Shipments">keyboard_arrow_left</mat-icon>
   </button>
 </mat-toolbar>
 
@@ -90,10 +73,10 @@ ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFr
   <ng-container matColumnDef="actualArrivalDateTimeFromLocation">
     <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Arrival Delay (Hrs) </mat-header-cell>
 
-    <mat-cell *matCellDef="let element" [ngClass]="{'positive' : element.arrivalDelay >= 0, 'negative' : element.arrivalDelay < 0}">
-      <mat-icon class="material-icons toto" *ngIf="element.arrivalDelay<0">thumb_down</mat-icon>
-      <mat-icon class="material-icons toto" *ngIf="element.arrivalDelay>=0">thumb_up</mat-icon>
-      {{element.arrivalDelay}}
+    <mat-cell *matCellDef="let element" [ngClass]="{'positive' : element.arrivalDelay!==null && element.arrivalDelay >= 0, 'negative' : element.arrivalDelay!==null && element.arrivalDelay < 0}">
+      <mat-icon class="material-icons toto" *ngIf="element.arrivalDelay!==null && element.arrivalDelay<0">thumb_down</mat-icon>
+      <mat-icon class="material-icons toto" *ngIf="element.arrivalDelay!==null && element.arrivalDelay>=0">thumb_up</mat-icon>
+      <span *ngIf="element.arrivalDelay!==null">{{element.arrivalDelay}}</span>
     </mat-cell>
   </ng-container>
 
@@ -105,9 +88,11 @@ ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFr
   </ng-container>
 
   <ng-container matColumnDef="actualDepartureDateTimeFromLocation">
-    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Com. Dep Time From Loc </mat-header-cell>
-    <mat-cell *matCellDef="let element">
-      {{element.actualDepartureDateTimeFromLocation | date}}
+    <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Departure Delay (Hrs) </mat-header-cell>
+    <mat-cell *matCellDef="let element" [ngClass]="{'positive' : element.departureDelay!==null && element.departureDelay >= 0, 'negative' : element.departureDelay!==null && element.departureDelay < 0}">
+      <mat-icon class="material-icons toto" *ngIf="element.departureDelay!==null && element.departureDelay<0">thumb_down</mat-icon>
+      <mat-icon class="material-icons toto" *ngIf="element.departureDelay!==null && element.departureDelay>=0">thumb_up</mat-icon>
+      <span *ngIf="element.departureDelay!==null">{{element.departureDelay}}</span>
     </mat-cell>
   </ng-container>
 

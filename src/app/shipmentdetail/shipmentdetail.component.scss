@@ -1,3 +1,8 @@
+
+$mat-row-height: 48px;
+
+$mat-row-horizontal-padding: 24px;
+
 .mat-form-field {
   font-size: 14px;
   width: 100%;
@@ -42,9 +47,14 @@
   //align-items: safe;
 }
 
+/*.mat-cell:nth-child(5),
+.mat-header-cell:nth-child(5),
+{
+  flex: 0 0 7%;
+  //justify-content: center;
+}
 
-
-/*.mat-cell:nth-child(6),
+.mat-cell:nth-child(6),
 .mat-header-cell:nth-child(6),
 {
   flex: 0 0 7%;
@@ -56,6 +66,7 @@
   background-color: #00AE4D;
   border-radius: 50px;
   font-weight: bold;
+
 }
 
 .negative {
@@ -63,6 +74,7 @@
   background-color: #f30531;
   border-radius: 50px;
   font-weight: bold;
+
 }
 
 

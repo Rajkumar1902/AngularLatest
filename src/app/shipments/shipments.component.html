@@ -1,6 +1,9 @@
 <mat-toolbar>
   <h2>Shipments</h2>
   <span class="flex-spacer"></span>
+  <button mat-icon-button>
+    <mat-icon matTooltip="Refresh" (click)="refresh()">refresh</mat-icon>
+  </button>
 </mat-toolbar>
 
 
@@ -12,14 +15,14 @@
   </div>
 
 
-  <mat-table #table [dataSource]="dataSource" matSort matSortActive="shipmentId" matSortDirection="asc" matSortDisableClear>
+  <mat-table #table [dataSource]="dataSource" matSort matSortActive="shipmentId" matSortDirection="desc" matSortDisableClear>
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
     <!-- ShipmentId Column -->
     <ng-container matColumnDef="shipmentId">
-      <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> ShipmentID </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Shipment ID </mat-header-cell>
       <mat-cell *matCellDef="let element"  [routerLink]="['/shipmentTracker', element.shipmentId]">
         <button mat-button >
           <span style="font-size: x-small;">{{element.shipmentId}}</span>
@@ -38,7 +41,7 @@
     </ng-container>
 
     <ng-container matColumnDef="shipFromLocation">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Ship From</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Ship From</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <span *ngIf="element.shipFromLocation!=null">
         {{element.shipFromLocation.locationCode}}
@@ -48,7 +51,7 @@
 
     <!-- Status Column -->
    <ng-container matColumnDef="shipToLocation">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Ship To</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Ship To</mat-header-cell>
       <mat-cell *matCellDef="let element">
          <span *ngIf="element.shipToLocation!=null">
         {{element.shipToLocation.locationCode}}

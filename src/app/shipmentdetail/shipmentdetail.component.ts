@@ -15,8 +15,8 @@ import {ShipmentLegs} from '../shared/shipmentlegs';
 })
 export class ShipmentdetailComponent implements OnInit {
 
-  displayedColumns = ['shipmentLegId', 'shipmentLegStatus', 'shipFromLocation', 'shipToLocation', 'computedArrivalDateTimeFromLocation',
-    'actualArrivalDateTimeFromLocation', 'computedDepartureDateTimeFromLocation', 'actualDepartureDateTimeFromLocation'/*, 'computedArrivalDateTimeToLocation',
+  displayedColumns = ['shipmentLegId', 'shipmentLegStatus', 'shipFromLocation', 'shipToLocation', /*'computedArrivalDateTimeFromLocation',*/
+    'actualArrivalDateTimeFromLocation', /*'computedDepartureDateTimeFromLocation', */'actualDepartureDateTimeFromLocation',/*, 'computedArrivalDateTimeToLocation',
   'actualArrivalDateTimeToLocation', 'computedDepartureDateTimeToLocation', 'actualDepartureDateTimeToLocation'*/];
   dataSource: MatTableDataSource<ShipmentLegs>;
   shipment: Shipment;
@@ -65,8 +65,18 @@ export class ShipmentdetailComponent implements OnInit {
         shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date(shipmentLeg.actualArrivalDateTimeFromLocation)) / 3600000;
       else
         shipmentLeg.arrivalDelay = null;
+
+      if(shipmentLeg.computedDepartureDateTimeFromLocation != null && shipmentLeg.actualDepartureDateTimeFromLocation != null)
+      //shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date('2019-01-05T14:00:00.000Z')) / 3600000;
+        shipmentLeg.departureDelay = Math.round(<any>new Date(shipmentLeg.computedDepartureDateTimeFromLocation) - <any>new Date(shipmentLeg.actualDepartureDateTimeFromLocation)) / 3600000;
+      else
+        shipmentLeg.departureDelay = null;
       console.log('calculating arrival delay' + shipmentLeg.arrivalDelay);
     }
+  }
+
+  reloadGridData(){
+
   }
   }
 

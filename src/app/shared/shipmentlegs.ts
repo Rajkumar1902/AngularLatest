@@ -23,5 +23,6 @@ export abstract class ShipmentLegs {
   actualArrivalDateTimeToLocation: string;
   actualDepartureDateTimeToLocation: string;
   arrivalDelay: number;
+  departureDelay: number;
   // Load load optional
 }

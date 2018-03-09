@@ -7,10 +7,11 @@
     <h2>Shipment Info: {{shipment.shipmentId}}</h2>
     <span class="flex-spacer"></span>
     <button mat-icon-button [routerLink]="['/shipmentDetail', shipment.shipmentId]">
-      <mat-icon matTooltip="Grid View" style="background-color: #00a9e0;; border-radius: 100px; color: white">list</mat-icon>
+      <mat-icon matTooltip="Grid View">list</mat-icon>
+      <!-- style="background-color: #00a9e0;; border-radius: 100px; color: white"-->
     </button>
     <button mat-icon-button routerLink="/shipments">
-      <mat-icon matTooltip="Back To Shipments" style="background-color: #00a9e0;; border-radius: 100px; color: white">keyboard_arrow_left</mat-icon>
+      <mat-icon matTooltip="Back To Shipments">keyboard_arrow_left</mat-icon>
     </button>
   </mat-toolbar>
 
