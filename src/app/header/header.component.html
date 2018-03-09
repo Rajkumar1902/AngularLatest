@@ -4,9 +4,21 @@
       <mat-icon>menu</mat-icon>
     </button>-->
     <img md-card-image src="assets\images\Butterfly.png" style="height: 40px">
+    <span style="padding-left: 10px"></span>
     <button mat-fab class="image"
             [style.backgroundImage]="'url(assets/images/Butterfly.png)'">
     </button>
+    <span style="padding-left: 10px"></span>
+    <img md-card-image src="assets\images\Butterfly-color.png" style="height: 40px">
+    <span style="padding-left: 10px"></span>
+    <button mat-fab class="image"
+            [style.backgroundImage]="'url(assets/images/Butterfly-color1.png)'">
+    </button>
+    <span style="padding-left: 10px"></span>
+    <button mat-fab class="image"
+            [style.backgroundImage]="'url(assets/images/Butterfly-color.png)'">
+    </button>
+
     <span style="padding-left: 10px"></span>
     <h1 class="example-app-name">Mantis</h1>
     <span class="flex-spacer"></span>
@@ -18,9 +30,25 @@
       <span class="notification">5</span>
     </button>
     <span style="padding-left: 10px"></span>
-    <button *ngIf="loginUser" mat-icon-button routerLink="/login" (click)="resetLoginUser()">
-      <mat-icon matTooltip="Login">account_circle</mat-icon>
+    <!--<button *ngIf="loginUser" mat-icon-button routerLink="/login" (click)="resetLoginUser()">
+      <mat-icon matTooltip="Logout">account_circle</mat-icon>
+    </button>-->
+
+
+    <mat-menu #appMenu="matMenu"[overlapTrigger]="false">
+      <button mat-menu-item routerLink="/login" (click)="resetLoginUser()" >
+        <mat-icon>power_settings_new</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+
+    <button mat-fab class="userimage" *ngIf="loginUser" [matMenuTriggerFor]="appMenu" [style.backgroundImage]="'url('+loginUserImage+')'">
     </button>
+
+    <!--<button mat-icon-button *ngIf="loginUser" [matMenuTriggerFor]="appMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>-->
+    <span style="padding-left: 10px"></span>
     <h2 *ngIf="loginUser" class="loginUser">{{loginUser}}</h2>
   </mat-toolbar>
 

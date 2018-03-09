@@ -29,7 +29,8 @@ import {
   MatCardModule,
   MatSelectModule,
   MatTooltipModule,
-  MatExpansionModule, matExpansionAnimations
+  MatExpansionModule,
+  MatMenuModule,
 
 } from '@angular/material';
 
@@ -89,7 +90,8 @@ import {DataService} from './services/data.service';
     MatSelectModule,
     FusionChartsModule,
     MatTooltipModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatMenuModule
    ],
   providers: [
     ShipperService, DataService, {provide: 'BaseURL', useValue: baseURL},

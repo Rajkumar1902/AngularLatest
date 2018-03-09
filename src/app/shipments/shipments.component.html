@@ -1,4 +1,9 @@
-<div class="example-container" fxLayout="column" fxLayoutAlign="top stretch">
+<mat-toolbar>
+  <h2>Shipments</h2>
+  <span class="flex-spacer"></span>
+</mat-toolbar>
+
+
 
   <div class="example-header">
     <mat-form-field>
@@ -81,10 +86,10 @@
   </mat-table>
 
   <mat-paginator #paginator
-                 [pageSize]="10"
+                 [pageSize]="5"
                  [pageSizeOptions]="[5, 10, 20]"
                  [showFirstLastButtons]="true">
   </mat-paginator>
 
 
-</div>
+

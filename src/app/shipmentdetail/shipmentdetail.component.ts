@@ -60,7 +60,11 @@ export class ShipmentdetailComponent implements OnInit {
     for (const shipmentLeg of this.shipment.shipmentLegs) {
       //console.log(entry); // 1, "string", false
      // console.log(Math.round(new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-new Date('2019-01-05T00:00:00.000Z'))/3600000);
-      shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date('2019-01-05T14:00:00.000Z')) / 3600000;
+      if(shipmentLeg.computedArrivalDateTimeFromLocation != null && shipmentLeg.actualArrivalDateTimeFromLocation != null)
+        //shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date('2019-01-05T14:00:00.000Z')) / 3600000;
+        shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date(shipmentLeg.actualArrivalDateTimeFromLocation)) / 3600000;
+      else
+        shipmentLeg.arrivalDelay = null;
       console.log('calculating arrival delay' + shipmentLeg.arrivalDelay);
     }
   }

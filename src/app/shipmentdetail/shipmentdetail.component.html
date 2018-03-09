@@ -90,9 +90,9 @@ ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFr
   <ng-container matColumnDef="actualArrivalDateTimeFromLocation">
     <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Arrival Delay (Hrs) </mat-header-cell>
 
-    <mat-cell *matCellDef="let element" [ngClass]="{'positive' : element.arrivalDelay > 0, 'negative' : element.arrivalDelay < 0}">
+    <mat-cell *matCellDef="let element" [ngClass]="{'positive' : element.arrivalDelay >= 0, 'negative' : element.arrivalDelay < 0}">
       <mat-icon class="material-icons toto" *ngIf="element.arrivalDelay<0">thumb_down</mat-icon>
-      <mat-icon class="material-icons toto" *ngIf="element.arrivalDelay>0">thumb_up</mat-icon>
+      <mat-icon class="material-icons toto" *ngIf="element.arrivalDelay>=0">thumb_up</mat-icon>
       {{element.arrivalDelay}}
     </mat-cell>
   </ng-container>
