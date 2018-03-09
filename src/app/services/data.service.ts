@@ -4,7 +4,7 @@ import { BehaviorSubject} from 'rxjs/BehaviorSubject';
 @Injectable()
 export class DataService {
 
-  private loginUser = new BehaviorSubject<string>('');
+  private loginUser = new BehaviorSubject<string>(sessionStorage.getItem('loginUser'));
   currentMessage = this.loginUser.asObservable();
 
   constructor() { }

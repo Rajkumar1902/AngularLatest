@@ -26,3 +26,38 @@
   font-size: small;
   font-weight: bold;
 }
+
+button {
+  &.image {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    width: 50px;
+    height: 50px;
+    cursor: auto;
+
+  }
+}
+
+button {
+  &.userimage {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    width: 30px;
+    height: 30px;
+    cursor: auto;
+
+  }
+}
+
+/*button.mat-menu-item{
+  background-color: white;
+}
+
+button.mat-menu-item:hover {
+  background-color: blue;
+  color: #fff !important;
+}*/

@@ -16,9 +16,20 @@ ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFr
 
 -->
 
-<div class="example-container" fxLayout="column" fxLayoutAlign="top stretch">
+<!--<div class="example-container" fxLayout="column" fxLayoutAlign="top stretch">-->
 
-  <div class="example-header">
+<mat-toolbar *ngIf="shipment!=null">
+  <h2>Shipment Info: {{shipment.shipmentId}}</h2>
+  <span class="flex-spacer"></span>
+  <button mat-icon-button [routerLink]="['/shipmentTracker', shipment.shipmentId]">
+    <mat-icon matTooltip="Summary View" style="background-color: #00a9e0;; border-radius: 50px; color: white">linear_scale</mat-icon>
+  </button>
+  <button mat-icon-button routerLink="/shipments">
+    <mat-icon matTooltip="Back To Shipments" style="background-color: #00a9e0;; border-radius: 50px; color: white">keyboard_arrow_left</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="example-header">
   <mat-form-field>
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
   </mat-form-field>
@@ -40,8 +51,18 @@ ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFr
 
   <ng-container matColumnDef="shipmentLegStatus">
     <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Status </mat-header-cell>
-    <mat-cell *matCellDef="let element">
-      {{element.shipmentLegStatus}}
+    <mat-cell *matCellDef="let element" [ngSwitch]="element.shipmentLegStatus">
+      <span *ngSwitchCase="'DSTS_SL_D_PROCESSING'">Processing</span>
+      <span *ngSwitchCase="'DSTS_SL_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
+      <span *ngSwitchCase="'DSTS_SL_D_PICKING_UP'">Picking Up</span>
+      <span *ngSwitchCase="'DSTS_SL_D_IN_TRANSIT'">In Tranist</span>
+      <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_DELIVERED'">Partially Delivered</span>
+      <span *ngSwitchCase="'DSTS_SL_D_DELIVERED'">Delivered</span>
+      <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_POD'">Partially POD</span>
+      <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
+      <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
+      <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
+      <span *ngSwitchDefault>{{element.shipmentLegStatus}}</span>
     </mat-cell>
   </ng-container>
 
@@ -68,7 +89,10 @@ ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFr
 
   <ng-container matColumnDef="actualArrivalDateTimeFromLocation">
     <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Arrival Delay (Hrs) </mat-header-cell>
-    <mat-cell *matCellDef="let element" [ngClass]="{'positive' : element.arrivalDelay > 0, 'negative' : element.arrivalDelay < 0}">
+
+    <mat-cell *matCellDef="let element" [ngClass]="{'positive' : element.arrivalDelay >= 0, 'negative' : element.arrivalDelay < 0}">
+      <mat-icon class="material-icons toto" *ngIf="element.arrivalDelay<0">thumb_down</mat-icon>
+      <mat-icon class="material-icons toto" *ngIf="element.arrivalDelay>=0">thumb_up</mat-icon>
       {{element.arrivalDelay}}
     </mat-cell>
   </ng-container>
@@ -97,7 +121,7 @@ ArrivalDelayAtFromLocation: {{shipment.shipmentLegs[0].computedArrivalDateTimeFr
                [pageSizeOptions]="[5, 10, 20]"
                [showFirstLastButtons]="true">
 </mat-paginator>
-</div>
+<!--</div>-->
 
 <!--<div fxLayout="column" class="flex-container">
 

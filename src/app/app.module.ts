@@ -28,7 +28,9 @@ import {
   MatInputModule,
   MatCardModule,
   MatSelectModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatExpansionModule,
+  MatMenuModule,
 
 } from '@angular/material';
 
@@ -87,7 +89,9 @@ import {DataService} from './services/data.service';
     RestangularModule.forRoot(RestangularConfigFactory),
     MatSelectModule,
     FusionChartsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatExpansionModule,
+    MatMenuModule
    ],
   providers: [
     ShipperService, DataService, {provide: 'BaseURL', useValue: baseURL},

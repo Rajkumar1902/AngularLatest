@@ -61,6 +61,7 @@ export class LoginComponent implements OnInit {
 
   setLoginUser(){
     this.data.changeMessage(this.loginUser);
+    sessionStorage.setItem('loginUser', this.loginUser);
   }
 
 
