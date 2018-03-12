@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService} from '../services/data.service';
+import { ShipperService} from '../services/shipper.service';
+import {Shipment} from '../shared/shipment';
+import {MatTableDataSource} from '@angular/material';
+import {User} from '../shared/user';
+import {ParticipantService} from '../services/participant.service';
 
 @Component({
   selector: 'app-login',
@@ -20,12 +25,15 @@ export class LoginComponent implements OnInit {
     {value: 'freightforwarder', viewValue: 'Freight Forwarder'}
   ];
 
-  shippers = [
+ /* shippers = [
     {value: '0', viewValue: 'Shipper 1'},
     {value: '1', viewValue: 'Shipper 2'}
-   ];
+   ];*/
+  shippers: User[];
+  carriers: User[];
+  freightForwarders: User[];
 
-  carriers = [
+  /*carriers = [
     {value: '0', viewValue: 'Carrier 1'},
     {value: '1', viewValue: 'Carrier 2'},
    ];
@@ -33,10 +41,14 @@ export class LoginComponent implements OnInit {
   freightForwarders = [
     {value: '0', viewValue: 'Freight Forwarder 1'},
     {value: '1', viewValue: 'Freight Forwarder 2'},
-  ];
-  constructor(private router: Router, private data: DataService) { }
+  ];*/
+  constructor(private router: Router, private data: DataService, private participantService: ParticipantService) { }
 
   ngOnInit() {
+    this.participantService.getShippers().subscribe(shippers => {this.shippers = this.shippers; });
+    this.participantService.getCarriers().subscribe(carriers => {this.carriers = this.carriers; });
+    this.participantService.getSuppliers().subscribe(freightForwarders => {this.freightForwarders = this.freightForwarders; });
+
   }
 
   getPlayers(playerType): String[] {
