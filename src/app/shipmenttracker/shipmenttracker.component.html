@@ -22,8 +22,8 @@
       <div class="md-stepper-horizontal green">
 
       <ul style="display: flex">
-        <li *ngFor="let leg of shipment.shipmentLegs" style="display:inline;">
-          <div class="{{ leg.shipmentLegStatus.toString() == 'DSTS_SL_D_DELIVERED' ? 'md-step active done' : 'md-step undone'}}">
+        <li *ngFor="let leg of shipment.shipmentLegs; index as index" style="display:inline;">
+          <div class="{{ leg.arrivalDelay < 0 && leg.shipmentLegStatus.toString()  ==  'DSTS_SL_D_DELIVERED' ? 'md-step delayed done' : leg.arrivalDelay > 0 && leg.shipmentLegStatus.toString()  ==  'DSTS_SL_D_DELIVERED'  ? 'md-step active done' : 'md-step '}}">
 
             <div class="md-step-circle"><span></span></div>
             <div class="md-step-title" [ngSwitch]="leg.shipmentLegStatus">
@@ -43,11 +43,11 @@
               <br>
               <small>{{ leg.actualArrivalDateTimeFromLocation | date}}</small>
             </div>
-            <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD;left:0;right:50%;margin-right:20px;"></div>
+            <span *ngIf="index > 0"><div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD;left:0;right:50%;margin-right:20px;"></div></span>
             <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD; right:0;left:50%;margin-left:20px;"></div>
           </div>
         </li>
-        <div class="{{ lastShipmentLeg.shipmentLegStatus.toString() == 'DSTS_SL_D_DELIVERED' ? 'md-step active done' : 'md-step undone'}}">
+        <div class="{{ lastShipmentLeg.arrivalDelay < 0 && lastShipmentLeg.shipmentLegStatus.toString()  ==  'DSTS_SL_D_DELIVERED' ? 'md-step delayed done' : lastShipmentLeg.arrivalDelay > 0 && lastShipmentLeg.shipmentLegStatus.toString()  ==  'DSTS_SL_D_DELIVERED'  ? 'md-step active done' : 'md-step '}}">
           <div class="md-step-circle"><span></span></div>
           <div class="md-step-title">
             <small>{{ lastShipmentLeg.shipmentLegStatus }}</small>

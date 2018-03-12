@@ -35,9 +35,18 @@ export class ShipmenttrackerComponent implements OnInit {
         errmess => this.errMess = <any>errmess);
      }
 
-  calculateArrivalDelay(){
-    for (let shipmentLeg of this.shipment.shipmentLegs) {
-      shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-<any>new Date('2019-01-05T14:00:00.000Z'))/3600000;
+  calculateArrivalDelay() {
+    for (const shipmentLeg of this.shipment.shipmentLegs) {
+      if(shipmentLeg.computedArrivalDateTimeFromLocation != null && shipmentLeg.actualArrivalDateTimeFromLocation != null)
+        shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date(shipmentLeg.actualArrivalDateTimeFromLocation)) / 3600000;
+      else
+        shipmentLeg.arrivalDelay = null;
+
+      if(shipmentLeg.computedDepartureDateTimeFromLocation != null && shipmentLeg.actualDepartureDateTimeFromLocation != null)
+        shipmentLeg.departureDelay = Math.round(<any>new Date(shipmentLeg.computedDepartureDateTimeFromLocation) - <any>new Date(shipmentLeg.actualDepartureDateTimeFromLocation)) / 3600000;
+      else
+        shipmentLeg.departureDelay = null;
+      console.log('calculating arrival delay' + shipmentLeg.arrivalDelay);
     }
   }
 
