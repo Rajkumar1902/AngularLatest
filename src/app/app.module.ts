@@ -52,6 +52,7 @@ import { ShipmentsComponent } from './shipments/shipments.component';
 import { ShipmentdetailComponent } from './shipmentdetail/shipmentdetail.component';
 import { ShipmenttrackerComponent } from './shipmenttracker/shipmenttracker.component';
 import {DataService} from './services/data.service';
+import {ParticipantService} from './services/participant.service';
 
 @NgModule({
   declarations: [
@@ -94,7 +95,7 @@ import {DataService} from './services/data.service';
     MatMenuModule
    ],
   providers: [
-    ShipperService, DataService, {provide: 'BaseURL', useValue: baseURL},
+    ShipperService, DataService, ParticipantService, {provide: 'BaseURL', useValue: baseURL},
   ],
   bootstrap: [AppComponent]
 })

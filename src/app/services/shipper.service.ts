@@ -30,4 +30,5 @@ export class ShipperService {
     return this.restAngular.one('/api/Shipment', id).get();
     //return Observable.of(SHIPMENTS);
   }*/
+
 }
