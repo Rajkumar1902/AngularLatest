@@ -14,7 +14,7 @@ import {ParticipantService} from '../services/participant.service';
 })
 export class LoginComponent implements OnInit {
 
-  players;
+  players: User[];
   loginUser: string;
 
   routerLink: String;
@@ -45,13 +45,13 @@ export class LoginComponent implements OnInit {
   constructor(private router: Router, private data: DataService, private participantService: ParticipantService) { }
 
   ngOnInit() {
-    this.participantService.getShippers().subscribe(shippers => {this.shippers = this.shippers; });
-    this.participantService.getCarriers().subscribe(carriers => {this.carriers = this.carriers; });
-    this.participantService.getSuppliers().subscribe(freightForwarders => {this.freightForwarders = this.freightForwarders; });
+    this.participantService.getShippers().subscribe(shippers => {this.shippers = shippers; });
+    this.participantService.getCarriers().subscribe(carriers => {this.carriers = carriers; });
+    this.participantService.getSuppliers().subscribe(freightForwarders => {this.freightForwarders = freightForwarders; });
 
   }
 
-  getPlayers(playerType): String[] {
+  getPlayers(playerType): User[] {
     if(playerType.value === 'shipper') {
       this.players = this.shippers;
       this.routerLink = '/shipper';
@@ -66,15 +66,12 @@ export class LoginComponent implements OnInit {
   }
 
   setPlayer(player){
-    this.loginUser = player.viewValue;
-    //console.log(this.loginUser);
-    //this.data.changeMessage(player.viewValue);
+    this.loginUser = player.uniqueId;
   }
 
   setLoginUser(){
     this.data.changeMessage(this.loginUser);
     sessionStorage.setItem('loginUser', this.loginUser);
   }
-
 
 }

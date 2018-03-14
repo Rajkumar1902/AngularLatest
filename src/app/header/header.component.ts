@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit {
 
   setImage(user: string) {
     switch (user) {
-      case "Shipper 1": {
+      case "LOWES": {
         this.loginUserImage = "'assets/images/pravin.png'";
         break;
       }
