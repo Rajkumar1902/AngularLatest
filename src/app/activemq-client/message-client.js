@@ -35,72 +35,155 @@ stompClient.connect(function() {
     });
   });
 });
+function handleLoadRelatedEvent(data, eventName,loadTM) {
+  var legs = data.CISDocument.ShipmentLeg;
+  var loadStatus = data.CISDocument.SystemLoadStatus;//data.CISDocument.SystemLoadStatus;"LL_DINTRANS"
+
+  if (legs[0] == undefined) {
+      var singleLeg = data.CISDocument.ShipmentLeg;
+      onLoadStopEvents(singleLeg, loadStatus, eventName,loadTM);
+
+    } else {
+        var shiplegArr = [];
+        for (i = 0; i < 10; i++) {
+          if (legs[i] == undefined) break;
+          shiplegArr.push(legs[i]);
+        }
+        callInLoop(shiplegArr);
+        function callInLoop(legsToRetrieve) {
+          var currentLeg = legsToRetrieve.shift();
+          var remainingArr = legsToRetrieve;
+
+          var loopfn = function(){
+            callInLoop(remainingArr);
+          };
+
+          if (currentLeg != null && currentLeg != undefined)  onLoadStopEvents(currentLeg, loadStatus, eventName, loadTM,loopfn);
+
+            }
+
+        }
+}
 function handleEvent(eventName, data) {
+
   if (eventName == 'ShipmentProcessed') {
 
     var shipmentId = data.CISDocument.SystemShipmentID;
+    console.log("Shipment Processing for ID: "+shipmentId);
 
     onShipmentProcessedEvent(shipmentId);
 
   } else if (eventName == 'LoadTenderAccepted') {
     var loadId = data.CISDocument.SystemLoadID;
-
+    console.log("Load tender accept begin for ID: "+loadId);
     onLoadTenderAcceptedEvent(loadId);
   }
-  else if (eventName == 'LoadStopConfirmed' || eventName == 'LoadStopDelivered') {  //?
-    var leg = data.CISDocument.ShipmentLeg;
-    //    console.log(shipmentLegArrTm);
-    var loadStatus = data.CISDocument.SystemLoadStatus;//data.CISDocument.SystemLoadStatus;"LL_DINTRANS"
+  else if (eventName == 'LoadStopConfirmed' || eventName == 'LoadStopDelivered' || eventName == 'LoadStopETARevision') {  //?
 
-    onLoadStopConfirmedOrDelivered(leg, loadStatus, eventName);
+    var loadId = data.CISDocument.SystemLoadID;
+    var args = {EntityType: "LoadType", Id: loadId, Select: {Collection: [{Name: "ShipmentLeg"},{Name: "Stop"}]}};
 
-  }/*else if(eventName == 'ShipmentDelivered'){
+    var callbackAfterQuery = function (result) {
+      var loadTM = result.Entity.Load[0];
+      console.log("load from TM: "+JSON.stringify(loadTM))
+      handleLoadRelatedEvent(data, eventName,loadTM);
+
+    };
+    invokeSOAPCall(args, callbackAfterQuery);
+
+
+  }
+  /*else if(eventName == 'ShipmentDelivered'){
 
   }*/
-  /*else if(eventName == 'LoadStopETARevision'){
 
-  }*/
 }
 
-function createUpdateShipmentTrx(legTm, newLoadStatus,newShipStatus,eventName) {
+function createUpdateShipmentTrx(legTm, newLoadStatus,newShipStatus,eventName,loadTM) {
 
   var updateShipmentTx = new UpdateShipmentPickupDelivery();
   updateShipmentTx.$class = "com.jda.shipment.visibility.UpdateShipmentPickupDelivery";
   updateShipmentTx.shipment = "resource:com.jda.shipment.visibility.Shipment#"+legTm.SystemShipmentID;
   updateShipmentTx.load = "resource:com.jda.shipment.visibility.Load#"+legTm.SystemLoadID;
+
+
   updateShipmentTx.newLoadStatus = newLoadStatus;
 
   updateShipmentTx.newShipmentStatus = newShipStatus;
   updateShipmentTx.shipmentLegId = legTm.Id;
   updateShipmentTx.newShipmentLegStatus = legTm.DisplayStatusEnumVal;
 
-  if(eventName == 'LoadStopConfirmed') {
+  var stop1 = loadTM.Stop[0];
+  var stop2 = loadTM.Stop[1];
+  if (stop1.LastComputedArrivalDateTime != null)
+    updateShipmentTx.pickupArrivalDateTime = stop1.LastComputedArrivalDateTime.toString();
+  if (stop1.LastComputedArrivalDateTime != null)
+    updateShipmentTx.pickupDepartureDateTime = stop1.LastComputedDepartureDateTime.toString();
+
+  if (stop1.LastComputedArrivalDateTime != null)
+    updateShipmentTx.dropArrivalDateTime = stop2.LastComputedArrivalDateTime.toString();
+  if (stop1.LastComputedArrivalDateTime != null)
+    updateShipmentTx.dropDepartureDateTime = stop2.LastComputedDepartureDateTime.toString();
+
+  /*if(eventName == 'LoadStopConfirmed') {
     if (legTm.PickupArrivalDateTime != null)
-      updateShipmentTx.pickupArrivalDateTime = legTm.PickupArrivalDateTime;
+      updateShipmentTx.pickupArrivalDateTime = legTm.PickupArrivalDateTime.toString();
     if (legTm.PickupDepartureDateTime != null)
-      updateShipmentTx.pickupDepartureDateTime = legTm.PickupDepartureDateTime;
+      updateShipmentTx.pickupDepartureDateTime = legTm.PickupDepartureDateTime.toString();
   }
   else {
     if (legTm.DropArrivalDateTime != null)
-      updateShipmentTx.dropArrivalDateTime = legTm.DropArrivalDateTime;
+      updateShipmentTx.dropArrivalDateTime = legTm.DropArrivalDateTime.toString();
     if (legTm.DropDepartureDateTime != null)
-      updateShipmentTx.dropDepartureDateTime = legTm.DropDepartureDateTime;
-  }
+      updateShipmentTx.dropDepartureDateTime = legTm.DropDepartureDateTime.toString();
+  }*/
   return updateShipmentTx;
 }
-function handleEachShipLeg(legTm,loadStatus,eventName) {
+function handleEachShipLeg(legTm,loadStatus,eventName,loadTM,loopFn) {
   var shipArgs = {EntityType: "ShipmentType", Id: legTm.SystemShipmentID};
 
   var shipCallback = function (result) {
       var shipTM = result.Entity.Shipment[0];
       var newShipmentStatus = shipTM.DisplayStatusEnumVal;
-      var updateShipmentTx = createUpdateShipmentTrx(legTm,loadStatus,newShipmentStatus,eventName);
+      var updateShipmentTx = createUpdateShipmentTrx(legTm,loadStatus,newShipmentStatus,eventName,loadTM);
 
-      //console.log(JSON.stringify(updateShipmentTx));
-
-    writeToBlockChain(updateShipmentTx,'/api/UpdateShipmentPickupDelivery');
+     writeToBlockChain(updateShipmentTx,'/api/UpdateShipmentPickupDelivery',loopFn);
     };
   invokeSOAPCall(shipArgs, shipCallback);
+}
+function queryTMShipmentLegs(loadTM) {
+  var shipLegDBResults = [];
+  shipLegRecursiveQuery(loadTM.ShipmentLeg,shipLegDBResults);
+
+  function shipLegRecursiveQuery(legsToRetrieve){
+    var currentLeg = legsToRetrieve.shift();
+    var remainingArr = legsToRetrieve;
+
+    var shipLegQueryCallback = function (result) {
+      var legTm = result.Entity.ShipmentLeg[0];
+
+      shipLegDBResults.push(legTm);
+
+      if(remainingArr.length > 0) {
+        shipLegRecursiveQuery(remainingArr,shipLegDBResults)
+      }else { //after all shipment legs queried, proceed to create load asset and transaction.
+        var loadAsset = fillLoad(loadTM,shipLegDBResults);
+
+        var associateLoadTx = createAssociateLoadTransaction(loadAsset);
+
+        var trxFn = function (result) {
+          writeToBlockChain(associateLoadTx,'/api/AssociateLoadAndShipmentLegs');
+        };
+        writeToBlockChain(loadAsset,'/api/Load',trxFn); //create load asset in blockchain
+
+      }
+    };
+
+    var legArgs = {EntityType: "ShipmentLegType", Id: currentLeg.SystemShipmentLegID}; //'100176875'
+
+    invokeSOAPCall(legArgs, shipLegQueryCallback);
+  }
+
 }
 function onLoadTenderAcceptedEvent(loadId) {
   //var args = {EntityType: "LoadType", Id: "76569", Select: {Collection: [{Name: "ShipmentLeg"}]}};
@@ -109,14 +192,9 @@ function onLoadTenderAcceptedEvent(loadId) {
 
   var callbackLoad = function (result) {
       var loadTM = result.Entity.Load[0];
-      var loadAsset = fillLoad(loadTM);
-      var assocateLoadTx = createAssociateLoadTransaction(loadAsset);
 
-      var trxFn = function (result) {
-        writeToBlockChain(assocateLoadTx,'/api/AssociateLoadAndShipmentLegs');
-      };
+      queryTMShipmentLegs(loadTM);
 
-      writeToBlockChain(loadAsset,'/api/Load',trxFn); //create load asset in blockchain
     };
   invokeSOAPCall(args, callbackLoad);
 }
@@ -126,7 +204,6 @@ function onShipmentProcessedEvent(shipmentId) {
 
 
   var callback = function (result) {
-      // console.log(result)
       var shipTM = result.Entity.Shipment[0];
       var shipmentAsset = fillShipment(shipTM);
 
@@ -135,33 +212,33 @@ function onShipmentProcessedEvent(shipmentId) {
     };
   invokeSOAPCall(args, callback);
 }
-function onLoadStopConfirmedOrDelivered(leg, loadStatus, eventName) {
-  var legArgs = {EntityType: "ShipmentLegType", Id: leg.SystemShipmentLegID}; //'100176875'
-
+function onLoadStopEvents(leg, loadStatus, eventName, loadTM, loopFn) {
+  var legArgs = {EntityType: "ShipmentLegType", Id: leg.SystemShipmentLegID};
   var shipLegCallback = function (result) {
       var legTm = result.Entity.ShipmentLeg[0];
-      handleEachShipLeg(legTm,loadStatus,eventName);
+      handleEachShipLeg(legTm,loadStatus,eventName,loadTM, loopFn);
     };
   invokeSOAPCall(legArgs, shipLegCallback);
+
 }
 
-function fillLoad(loadTM) {
+function fillLoad(loadTM, shipLegDBResults) {
   var load = new Load();
   load.loadId = loadTM.Id;
   load.carrierCode = loadTM.CarrierCode;
-  //load.loadStatus= loadTM.;
-  //load.loadId = loadTM.Id;
+  load.vesselName = loadTM.Vessel;
+  load.voyageNumber = loadTM.VoyageNumber;
 
-  var shipmentLegs = fillShipmentLegsForLoad(loadTM.ShipmentLeg);
+  var shipmentLegAssets = fillShipmentLegsForLoad(shipLegDBResults);
   var containerInfoTM = fillContainerInfo(loadTM);
 
-  load.shipmentLegs = shipmentLegs;
+  load.shipmentLegs = shipmentLegAssets;
   load.loadDimInfo = containerInfoTM;
 
   return load;
 }
 function writeToBlockChain(asset, restUrl,postFn) {
-  console.log("starting : "+restUrl);
+  console.log("starting writing to blockchain : "+restUrl);
   asset = JSON.stringify(asset);
   var http = require('http');
   var postheaders = {
@@ -169,7 +246,7 @@ function writeToBlockChain(asset, restUrl,postFn) {
     'Content-Length': Buffer.byteLength(asset, 'utf8')
   };
   var optionspost = {
-    host: '35.200.243.178',
+    host: '35.200.243.178', //blockchain composer-rest-server url
     port: 3000,
     path: restUrl,
     method: 'POST',
@@ -179,7 +256,6 @@ function writeToBlockChain(asset, restUrl,postFn) {
   var reqPost = http.request(optionspost, function (res) {
     console.log("statusCode: ", res.statusCode);
     res.on('data', function (d) {
-      console.log('POST result:\n');
       process.stdout.write(d);
       console.info('\n\npost call completed for: '+restUrl);
 
@@ -196,58 +272,47 @@ function writeToBlockChain(asset, restUrl,postFn) {
   });
 }
 
-function fillOnShipmentCreation(shipmentLegAsset, shipTm) {
-  shipmentLegAsset.pickupArrivalDateTime = shipTm.PickupArrivalDateTime;
-  shipmentLegAsset.pickupDepartureDateTime = shipTm.PickupDepartureDateTime;
-  shipmentLegAsset.dropArrivalDateTime = shipTm.DropArrivalDateTime;
-  shipmentLegAsset.dropDepartureDateTime = shipTm.DropDepartureDateTime;
+function fillOnShipmentCreation(shipmentLegAsset, shipmentLegTm) {
+  if(shipmentLegTm.PickupArrivalDateTime != undefined && shipmentLegTm.PickupArrivalDateTime != null) shipmentLegAsset.pickupArrivalDateTime = shipmentLegTm.PickupArrivalDateTime.toString();
+  if(shipmentLegTm.PickupDepartureDateTime != undefined && shipmentLegTm.PickupDepartureDateTime != null) shipmentLegAsset.pickupDepartureDateTime = shipmentLegTm.PickupDepartureDateTime.toString();
+  if(shipmentLegTm.DropArrivalDateTime != undefined && shipmentLegTm.DropArrivalDateTime != null) shipmentLegAsset.dropArrivalDateTime = shipmentLegTm.DropArrivalDateTime.toString();
+  if(shipmentLegTm.DropDepartureDateTime != undefined && shipmentLegTm.DropDepartureDateTime != null) shipmentLegAsset.dropDepartureDateTime = shipmentLegTm.DropDepartureDateTime.toString();
 }
 
-function fillOnLoadAccept(shipmentLegAsset, shipmentLegTm) {
-  shipmentLegAsset.computedArrivalDateTimeFromLocation = shipmentLegTm.ComputedDateTimeOfPickArrival;
-  shipmentLegAsset.computedDepartureDateTimeFromLocation = shipmentLegTm.ComputedDateTimeOfPickDeparture;
-  shipmentLegAsset.computedArrivalDateTimeToLocation = shipmentLegTm.ComputedDateTimeOfDropArrival;
-  shipmentLegAsset.computedDepartureDateTimeToLocation = shipmentLegTm.ComputedDateTimeOfDropDeparture;
-
+function fillTimesOnLoadAccept(shipmentLegAsset, shipmentLegTm) {
+  shipmentLegAsset.computedArrivalDateTimeFromLocation = shipmentLegTm.ComputedDateTimeOfPickArrival.toString();
+  shipmentLegAsset.computedDepartureDateTimeFromLocation = shipmentLegTm.ComputedDateTimeOfPickDeparture.toString();
+  shipmentLegAsset.computedArrivalDateTimeToLocation = shipmentLegTm.ComputedDateTimeOfDropArrival.toString();
+  shipmentLegAsset.computedDepartureDateTimeToLocation = shipmentLegTm.ComputedDateTimeOfDropDeparture.toString();
 }
 
-//?-todo
-function fillActualTime(shipmentLegAsset, shipmentLegTm) {
-  shipmentLegAsset.actualArrivalDateTimeFromLocation = shipmentLegTm.ComputedDateTimeOfPickArrival;
-  shipmentLegAsset.actualDepartureDateTimeFromLocation = shipmentLegTm.ComputedDateTimeOfPickDeparture;
-  shipmentLegAsset.actualArrivalDateTimeToLocation = shipmentLegTm.ComputedDateTimeOfDropArrival;
-  shipmentLegAsset.actualDepartureDateTimeToLocation = shipmentLegTm.ComputedDateTimeOfDropDeparture;
-
-
-}
 function fillShipment(shipTM) {
-
-  //  console.log(shipment.ShipmentNumber);
 
   var shipment = new Shipment();
   shipment.$class = 'com.jda.shipment.visibility.Shipment';
   shipment.shipmentId = shipTM.SystemShipmentID;
+  shipment.shipmentUserId  =shipTM.ShipmentNumber;
   shipment.shipmentStatus = 'DSTS_SHPM_D_PROCESSING';//data.CISDocument.EventName;
   // shipment.freightTerms = 'FT_COLLECT';//data.CISDocument.FreightTerm;
-  shipment.pickupFromDateTime = shipTM.PickupFromDateTime;
-  shipment.pickupToDateTime = shipTM.PickupToDateTime;
-  shipment.deliveryFromDateTime = shipTM.DeliveryFromDateTime;
-  shipment.deliveryToDateTime = shipTM.DeliveryToDateTime;
+  shipment.pickupFromDateTime = shipTM.PickupFromDateTime.toString();
+  shipment.pickupToDateTime = shipTM.PickupToDateTime.toString();
+  shipment.deliveryFromDateTime = shipTM.DeliveryFromDateTime.toString();
+  shipment.deliveryToDateTime = shipTM.DeliveryToDateTime.toString();
   shipment.commodityCode = shipTM.CommodityCode;
   shipment.unitOfMeasure = shipTM.unitOfMeasure;//Model needs to be changed
-  shipment.pickupArrivalDateTime = shipTM.PickupFromDateTime;
-  shipment.pickupDepartureDateTime = shipTM.PickupToDateTime;
-  shipment.dropArrivalDateTime = shipTM.DeliveryFromDateTime;
-  shipment.dropDepartureDateTime = shipTM.DeliveryToDateTime;
+  shipment.pickupArrivalDateTime = shipTM.PickupFromDateTime.toString();
+  shipment.pickupDepartureDateTime = shipTM.PickupToDateTime.toString();
+  shipment.dropArrivalDateTime = shipTM.DeliveryFromDateTime.toString();
+  shipment.dropDepartureDateTime = shipTM.DeliveryToDateTime.toString();
+  shipment.customerCode = shipTM.CustomerCode;
 
   var shipFromLocation = new Location();
   shipFromLocation.$class = 'com.jda.shipment.visibility.Location';
   shipFromLocation.locationCode = shipTM.ShipFromLocationCode;
-  // console.log(shipTM.ShipFromAddress);
+  //shipFromLocation.locationName= shipTM.
   fillAddress(shipFromLocation, shipTM.ShipFromAddress);
   shipment.shipFromLocation = shipFromLocation;
 
-  //console.log(shipFromLocation);
 
   var shipToLocation = new Location();
   shipToLocation.$class = 'com.jda.shipment.visibility.Location';
@@ -263,18 +328,19 @@ function fillShipment(shipTM) {
 
 }
 
-function fillAddress(location, shipFromAddress) {
-  location.city = shipFromAddress.City;
-  location.country = shipFromAddress.CountryCode;
+function fillAddress(location, addressTm) {
+  location.city = addressTm.City;
+  location.country = addressTm.CountryCode;
   //  shipFromLocation.locality = shipTM.OriginShippingLocationName;
   //shipFromLocation.region = data.CISDocument.OriginAddress. //not available
   //  location.street = shipFromAddress.Street;
   //shipFromLocation.street2 = shipTM.OriginAddress.OriginBlock;
   // shipFromLocation.street3 = data.CISDocument.OriginAddress. //not available
-  location.stateCode = shipFromAddress.State;//Added newly
-  location.postalCode = shipFromAddress.PostalCode;
-  location.latitude = shipFromAddress.Latitude;
-  location.longitude = shipFromAddress.Longitude;
+  location.stateCode = addressTm.State;//Added newly
+  location.postalCode = addressTm.PostalCode;
+  location.latitude = addressTm.Latitude;
+  location.longitude = addressTm.Longitude;
+  location.locationName=addressTm.ShippingLocationDescription;
 
 }
 
@@ -305,7 +371,7 @@ function fillShipmentLegsForLoad(shipmentLegs) {
 
     shipmentLegAsset.shipToLocation = shipLegToLocation;
 
-    fillOnLoadAccept(shipmentLegAsset, shipmentLegTm);
+    fillTimesOnLoadAccept(shipmentLegAsset, shipmentLegTm);
 
     shipmentLegAssets[i] = shipmentLegAsset;
   }
@@ -315,6 +381,7 @@ function fillShipmentLegs(shipmentLegs, shipTm) {
   var shipmentLegAssetArr = [];
   for (i = 0; i < shipmentLegs.length; i++) {
     var shipmentLegTm = shipmentLegs[i];
+
     var shipmentLegAsset = new ShipmentLeg();
     shipmentLegAsset.$class = "com.jda.shipment.visibility.ShipmentLegs";
     shipmentLegAsset.shipmentLegId = shipmentLegTm.Id;
@@ -336,7 +403,7 @@ function fillShipmentLegs(shipmentLegs, shipTm) {
 
     shipmentLegAsset.shipToLocation = shipLegToLocation;
 
-    fillOnShipmentCreation(shipmentLegAsset, shipTm);
+    fillOnShipmentCreation(shipmentLegAsset, shipmentLegTm);
 
 
     shipmentLegAssetArr[i] = shipmentLegAsset;
@@ -395,7 +462,6 @@ function createAssociateLoadTransaction(loadAsset) {
 
   prepareShipmentArray(loadAsset,assocateLoadTx);
 
-  // console.log(assocateLoadTx);
   return assocateLoadTx;
 }
 function invokeSOAPCall(args, fn) {
@@ -414,6 +480,7 @@ function invokeSOAPCall(args, fn) {
 var Location = new SchemaObject({
   $class: "com.jda.shipment.visibility.Location",
   locationCode: String,
+  locationName: String,
   city: String,
   country: String,
   locality: String,
@@ -430,6 +497,7 @@ var Location = new SchemaObject({
 var Shipment = new SchemaObject({
   $class: "com.jda.shipment.visibility.Shipment",
   shipmentId: String,
+  shipmentUserId: String,
   shipmentStatus: String,
   shipmentLegs: [],
   freightTerms: String,
@@ -444,6 +512,7 @@ var Shipment = new SchemaObject({
   dropArrivalDateTime: String,
   dropDepartureDateTime: String,
   load: String,
+  customerCode: String,
   shipFromLocation: Location,
   shipToLocation: Location
 
@@ -508,6 +577,8 @@ var Load = new SchemaObject(
     shipmentLegs: [ShipmentLeg],
     loadStatus: String,
     loadDimInfo: ShipmentContainerInfo,
+    vesselName:String,
+    voyageNumber:String
 
   });
 
