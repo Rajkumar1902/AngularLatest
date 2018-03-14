@@ -45,28 +45,28 @@
       <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
       <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
       <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
-      <span *ngSwitchDefault>{{element.shipmentLegStatus}}</span>
+      <span *ngSwitchDefault>Not Started</span>
     </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="shipFromLocation">
     <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Ship From </mat-header-cell>
     <mat-cell *matCellDef="let element">
-      {{element.shipFromLocation.locationCode}}
+      {{element.shipFromLocation.locationName}}
     </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="shipToLocation">
     <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Ship To </mat-header-cell>
     <mat-cell *matCellDef="let element">
-      {{element.shipToLocation.locationCode}}
+      {{element.shipToLocation.locationName}}
     </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="computedArrivalDateTimeFromLocation">
     <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Com. Arvl Time From Loc </mat-header-cell>
     <mat-cell *matCellDef="let element">
-      {{element.computedArrivalDateTimeFromLocation | date}}
+      {{element.computedArrivalDateTimeFromLocation | date : "medium" : "Z"}}
     </mat-cell>
   </ng-container>
 
@@ -83,7 +83,7 @@
   <ng-container matColumnDef="computedDepartureDateTimeFromLocation">
     <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Com. Dpt Time From Loc </mat-header-cell>
     <mat-cell *matCellDef="let element">
-      {{element.computedDepartureDateTimeFromLocation | date}}
+      {{element.computedDepartureDateTimeFromLocation | date : "medium" : "Z"}}
     </mat-cell>
   </ng-container>
 
