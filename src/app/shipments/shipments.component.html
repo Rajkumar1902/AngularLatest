@@ -36,7 +36,7 @@
         <span *ngSwitchCase="'DSTS_SHPM_D_IN_TRANSIT'">In Tranist</span>
         <span *ngSwitchCase="'DSTS_SHPM_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
         <span *ngSwitchCase="'DSTS_SHPM_D_DELIVERED'">Delivered</span>
-        <span *ngSwitchDefault>{{element.shipmentStatus}}</span>
+        <span *ngSwitchDefault>Not Started</span>
       </mat-cell>
     </ng-container>
 
@@ -44,7 +44,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>Ship From</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <span *ngIf="element.shipFromLocation!=null">
-        {{element.shipFromLocation.locationCode}}
+        {{element.shipFromLocation.locationName}}
         </span>
       </mat-cell>
     </ng-container>
@@ -54,29 +54,29 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>Ship To</mat-header-cell>
       <mat-cell *matCellDef="let element">
          <span *ngIf="element.shipToLocation!=null">
-        {{element.shipToLocation.locationCode}}
+        {{element.shipToLocation.locationName}}
          </span>
       </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="pickupFromDateTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup From Date</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.pickupFromDateTime | date}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.pickupFromDateTime | date : "medium" : "Z"}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="pickupToDateTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup To Date</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.pickupToDateTime | date}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.pickupToDateTime | date : "medium" : "Z"}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="deliveryFromDateTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Delivery From Date </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.deliveryFromDateTime | date}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.deliveryFromDateTime | date : "medium" : "Z"}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="deliveryToDateTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Delivery To Date </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.deliveryToDateTime | date}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.deliveryToDateTime | date : "medium" : "Z"}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="commodityCode">
