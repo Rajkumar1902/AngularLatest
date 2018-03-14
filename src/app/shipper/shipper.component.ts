@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import { ShipperService } from '../services/shipper.service';
+import { Shipment } from '../shared/shipment';
 
 @Component({
   selector: 'app-shipper',
   templateUrl: './shipper.component.html',
   styleUrls: ['./shipper.component.scss']
 })
-export class ShipperComponent {
+export class ShipperComponent implements OnInit{
+  totalShipments: number;
+  shipments: Shipment[];
   width = 500;
   height = 300;
   type = 'pie3d';
@@ -26,21 +30,22 @@ export class ShipperComponent {
     },
     "data": [
       {
-        "label": "Delayed",
-        "value": "50"
-      },
-      {
         "label": "In-Transit",
         "value": "30"
       },
       {
         "label": "On-Time",
         "value": "20"
-      }
+      },
+      {
+        "label": "Delayed",
+        "value": "50"
+      },
+
     ]
   };
 
-  countriesDataSource = {
+  /*countriesDataSource = {
     "chart": {
       "caption": "Countries",
       "subcaption": "",
@@ -68,5 +73,21 @@ export class ShipperComponent {
         "value": "20"
       }
     ]
-  };
+  };*/
+
+  constructor(private shipperService: ShipperService){}
+
+  ngOnInit() {
+    this.shipperService.getShipments().subscribe(shipments => {
+      this.shipments = shipments;
+      /*this.shipments.filter(
+
+      )*/
+      this.totalShipments = this.shipments.length;
+    });
+
+   /* function deliveredShipments(shipment){
+        return shipment => shipment.shipmentStatus == 'DSTS_SHPM_D_DELIVERED';
+    }*/
+  }
 }
