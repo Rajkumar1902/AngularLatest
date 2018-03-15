@@ -6,6 +6,9 @@
      </button>-->
     <h2>Shipment ID: {{shipment.shipmentId}}</h2>
     <span class="flex-spacer"></span>
+    <button mat-icon-button>
+      <mat-icon matTooltip="Refresh" (click)="refresh()">refresh</mat-icon>
+    </button>
     <button mat-icon-button [routerLink]="['/shipmentDetail', shipment.shipmentId]">
       <mat-icon matTooltip="Grid View">list</mat-icon>
       <!-- style="background-color: #00a9e0;; border-radius: 100px; color: white"-->
@@ -22,143 +25,67 @@
       <div class="md-stepper-horizontal green">
 
       <ul style="display: flex">
-        <li *ngFor="let leg of shipment.shipmentLegs; index as index" style="display:inline;">
-          <div class="{{ (leg.arrivalDelay!=null && leg.arrivalDelay < 0) ? 'md-step delayed done' : (leg.arrivalDelay!=null && leg.arrivalDelay >= 0)  ? 'md-step active done' : 'md-step '}}">
+        <li *ngFor="let node of nodes; index as index" style="display:inline;">
+          <div class="{{ node.iconStyle }}">
             <div class="md-step-circle"><span></span></div>
-            <div class="md-step-title">
-             <!-- <small>
-                <span *ngSwitchCase="'DSTS_SL_D_PROCESSING'">Processing</span>
-                <span *ngSwitchCase="'DSTS_SL_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
-                <span *ngSwitchCase="'DSTS_SL_D_PICKING_UP'">Picking Up</span>
-                <span *ngSwitchCase="'DSTS_SL_D_IN_TRANSIT'">In Tranist</span>
-                <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_DELIVERED'">Partially Delivered</span>
-                <span *ngSwitchCase="'DSTS_SL_D_DELIVERED'">Delivered</span>
-                <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_POD'">Partially POD</span>
-                <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
-                <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
-                <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
-                <span *ngSwitchDefault>{{leg.shipmentLegStatus}}</span>
-              </small>
-              <br>-->
-              <small>{{ leg.shipFromLocation.locationName}}</small>
+            <!--<span style="text-align: right"><small>Delay: {{ node.delay}}</small></span>-->
+            <div class="{{ node.nodeTitleStyle }}">
               <br>
-              <small><b>{{ leg.shipFromLocation.city }}, {{ leg.shipFromLocation.country}}</b></small>
+              <small>{{ node.locationName}}</small>
               <br>
-              <small>Arrival: {{ leg.actualArrivalDateTimeFromLocation != null ? (leg.actualArrivalDateTimeFromLocation | date : "MMM d, yyyy h:mm a" : "Z") : (leg.computedArrivalDateTimeFromLocation | date : "MMM d, yyyy h:mm a" : "Z")}}</small>
+              <small><b>{{ node.city }}, {{ node.country}}</b></small>
               <br>
-              <small>Departure: {{ leg.actualDepartureDateTimeFromLocation != null ? (leg.actualDepartureDateTimeFromLocation | date : "MMM d, yyyy h:mm a" : "Z") : (leg.computedDepartureDateTimeFromLocation | date : "MMM d, yyyy h:mm a" : "Z")}}</small>
+              <small *ngIf="node.arrivalTime != null">Arrival: {{  node.arrivalTime | date : "MMM d, yyyy h:mm a" : "Z"}}</small>
+              <br>
+              <small *ngIf="node.departureTime != null">Departure:  {{ node.departureTime | date : "MMM d, yyyy h:mm a" : "Z" }}</small>
             </div>
             <span *ngIf="index > 0">
-              <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD;left:0;right:50%;margin-right:20px;"></div>
+              <div class="{{ node.leftLineStyle }}"></div>
             </span>
-           <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD; right:0;left:50%;margin-left:20px;" [ngSwitch]="leg.shipmentLegStatus">
-              <span style="font-size: x-small;font-weight: bold;">
-                <span *ngSwitchCase="'DSTS_SL_D_PROCESSING'">Processing</span>
-                <span *ngSwitchCase="'DSTS_SL_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
-                <span *ngSwitchCase="'DSTS_SL_D_PICKING_UP'">Picking Up</span>
-                <span *ngSwitchCase="'DSTS_SL_D_IN_TRANSIT'">In Tranist</span>
-                <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_DELIVERED'">Partially Delivered</span>
-                <span *ngSwitchCase="'DSTS_SL_D_DELIVERED'">Delivered</span>
-                <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_POD'">Partially POD</span>
-                <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
-                <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
-                <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
-                <span *ngSwitchDefault>{{leg.shipmentLegStatus}}</span>
-              </span>
+           <span *ngIf="index != (nodes.length - 1) ">
+              <div class="{{ node.rightLineStyle }}" [ngSwitch]="node.status">
+                <span class="node-status">
+                  <span *ngSwitchCase="'1'">Picked Up</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PROCESSING'">Processing</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PICKING_UP'">Picking Up</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_IN_TRANSIT'">In Transit</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_DELIVERED'">Partially Delivered</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_DELIVERED'">Delivered</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_POD'">Partially POD</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
+                  <span *ngSwitchDefault>{{node.status}}</span>
+                </span>
+              </div>
+            </span>
+            <span *ngIf="index == (nodes.length - 1) ">
+              <div class="last-line" [ngSwitch]="node.status">
+                <span class="node-status">
+                  <span *ngSwitchCase="'1'">Picked Up</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PROCESSING' ">Processing</span>
+                   <span *ngSwitchCase="'2' ">Processing</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
+                  <span *ngSwitchCase="'3'">Assigned To Carrier</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PICKING_UP'">Picking Up</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_IN_TRANSIT'">In Transit</span>
+                  <span *ngSwitchCase="'5'">In Transit</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_DELIVERED'">Partially Delivered</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_DELIVERED'">Delivered</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_POD'">Partially POD</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
+                  <span *ngSwitchDefault>{{node.status}}</span>
+                </span>
+              </div>
+            </span>
 
-            </div>
           </div>
         </li>
-        <div class="{{ (lastShipmentLeg.arrivalDelay!=null && lastShipmentLeg.arrivalDelay < 0) ? 'md-step delayed done' : (lastShipmentLeg.arrivalDelay!=null && lastShipmentLeg.arrivalDelay >= 0)  ? 'md-step active done' : 'md-step '}}">
-          <div class="md-step-circle"><span></span></div>
-          <div class="md-step-title" [ngSwitch]="lastShipmentLeg.shipmentLegStatus">
-            <small>
-            <!--  <span *ngSwitchCase="'DSTS_SL_D_PROCESSING'">Processing</span>
-              <span *ngSwitchCase="'DSTS_SL_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
-              <span *ngSwitchCase="'DSTS_SL_D_PICKING_UP'">Picking Up</span>
-              <span *ngSwitchCase="'DSTS_SL_D_IN_TRANSIT'">In Tranist</span>
-              <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_DELIVERED'">Partially Delivered</span>-->
-              <span *ngSwitchCase="'DSTS_SL_D_DELIVERED'">Delivered</span>
-              <!--<span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_POD'">Partially POD</span>
-              <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
-              <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
-              <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
-              <span *ngSwitchDefault>{{ lastShipmentLeg.shipmentLegStatus }}</span>-->
-            </small>
-            <br>
-            <small>{{ lastShipmentLeg.shipToLocation.locationName}}</small>
-            <br>
-            <small><b>{{ lastShipmentLeg.shipToLocation.city }}, {{ lastShipmentLeg.shipToLocation.country}}</b></small>
-            <br>
-            <small>Arrival: {{ lastShipmentLeg.actualArrivalDateTimeFromLocation != null ? (lastShipmentLeg.actualArrivalDateTimeFromLocation | date : "MMM d, yyyy h:mm a" : "Z") : (lastShipmentLeg.computedArrivalDateTimeFromLocation | date : "MMM d, yyyy h:mm a" : "Z")}}</small>
-          </div>
-          <div class="md-step-bar-left"></div>
-        </div>
       </ul>
       </div>
-
-
     </mat-card>
-   <!-- <mat-accordion>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Shipment Summary
-          </mat-panel-title>
-          <mat-panel-description>
-            Type your name and age
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-
-        <div class="md-stepper-horizontal green">
-
-          <ul style="display: flex">
-            <li *ngFor="let leg of shipment.shipmentLegs" style="display:inline;">
-              <div class="{{ leg.shipmentLegStatus.toString() == 'DSTS_SL_D_DELIVERED' ? 'md-step active done' : 'md-step undone'}}">
-
-                <div class="md-step-circle"><span></span></div>
-                <div class="md-step-title">
-                  <small>{{ leg.shipmentLegStatus }}</small>
-                  <br>
-                  <small><b>{{ leg.shipFromLocation.city }}, {{ leg.shipFromLocation.country}}</b></small>
-                  <br>
-                  <small>{{ leg.actualArrivalDateTimeFromLocation | date}}</small>
-                </div>
-                <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD;left:0;right:50%;margin-right:20px;"></div>
-                <div style="position:absolute;top:36px;height:1px;border-top:1px solid #DDDDDD; right:0;left:50%;margin-left:20px;"></div>
-              </div>
-            </li>
-            <div class="{{ lastShipmentLeg.shipmentLegStatus.toString() == 'DSTS_SL_D_DELIVERED' ? 'md-step active done' : 'md-step undone'}}">
-              <div class="md-step-circle"><span></span></div>
-              <div class="md-step-title">
-                <small>{{ lastShipmentLeg.shipmentLegStatus }}</small>
-                <br>
-                <small><b>{{ lastShipmentLeg.shipToLocation.city }}, {{ lastShipmentLeg.shipToLocation.country}}</b></small>
-                <br>
-                <small>{{ lastShipmentLeg.actualArrivalDateTimeFromLocation | date}}</small>
-              </div>
-              <div class="md-step-bar-left"></div>
-            </div>
-          </ul>
-        </div>
-      </mat-expansion-panel>
-      <mat-expansion-panel (opened)="panelOpenState = true"
-                           (closed)="panelOpenState = false">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Shipment Leg Details
-          </mat-panel-title>
-          <mat-panel-description>
-            Currently I am {{panelOpenState ? 'open' : 'closed'}}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <app-shipmentdetail></app-shipmentdetail>
-      </mat-expansion-panel>
-    </mat-accordion>
--->
   </div>
-
-
-
-
 </div>

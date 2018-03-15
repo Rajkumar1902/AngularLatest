@@ -14,7 +14,6 @@
     </mat-form-field>
   </div>
 
-
   <mat-table #table [dataSource]="dataSource" matSort matSortActive="shipmentId" matSortDirection="desc" matSortDisableClear>
 
     <!--- Note that these columns can be defined in any order.
@@ -33,7 +32,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
       <mat-cell *matCellDef="let element" [ngSwitch]="element.shipmentStatus">
         <span *ngSwitchCase="'DSTS_SHPM_D_PROCESSING'">Processing</span>
-        <span *ngSwitchCase="'DSTS_SHPM_D_IN_TRANSIT'">In Tranist</span>
+        <span *ngSwitchCase="'DSTS_SHPM_D_IN_TRANSIT'">In Transit</span>
         <span *ngSwitchCase="'DSTS_SHPM_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
         <span *ngSwitchCase="'DSTS_SHPM_D_DELIVERED'">Delivered</span>
         <span *ngSwitchDefault>Not Started</span>
