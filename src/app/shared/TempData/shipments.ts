@@ -13,6 +13,7 @@ export const SHIPMENTS: Shipment[] = [
 
   {
       shipmentId: 'SHP01',
+      shipmentUserId: 'Test',
       freightTerms: FreightTerms.FT_COLLECT,
       shipFromLocation: LOCATIONS[0],
       shipToLocation: LOCATIONS[1],
@@ -29,6 +30,7 @@ export const SHIPMENTS: Shipment[] = [
   },
     {
       shipmentId: 'SHP02',
+      shipmentUserId: 'Test',
       freightTerms: FreightTerms.FT_PRE_PAID,
       shipFromLocation: LOCATIONS[2],
       shipToLocation: LOCATIONS[3],

@@ -1,7 +1,7 @@
 <!--<div class="example-container" fxLayout="column" fxLayoutAlign="top stretch">-->
 
 <mat-toolbar *ngIf="shipment!=null">
-  <h2>Shipment Info: {{shipment.shipmentId}}</h2>
+  <h2>Shipment Info: {{shipment.shipmentUserId}}</h2>
   <span class="flex-spacer"></span>
   <button mat-icon-button [routerLink]="['/shipmentTracker', shipment.shipmentId]">
     <mat-icon matTooltip="Summary View">linear_scale</mat-icon>

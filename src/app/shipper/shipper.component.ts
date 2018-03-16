@@ -30,16 +30,16 @@ export class ShipperComponent implements OnInit{
     },
     "data": [
       {
-        "label": "In-Transit",
+        "label": "In-Transit %",
         "value": "30"
       },
       {
-        "label": "On-Time",
-        "value": "20"
+        "label": "On-Time %",
+        "value": "50"
       },
       {
-        "label": "Delayed",
-        "value": "50"
+        "label": "Delayed %",
+        "value": "20"
       },
 
     ]
@@ -80,13 +80,12 @@ export class ShipperComponent implements OnInit{
   ngOnInit() {
     this.shipperService.getShipments().subscribe(shipments => {
       this.shipments = shipments;
-      /*this.shipments.filter(
-
-      )*/
+      
+      //console.log('length----------->'+this.shipments.filter(deliveredShipments).length);
       this.totalShipments = this.shipments.length;
     });
 
-   /* function deliveredShipments(shipment){
+    /*function deliveredShipments(shipment){
         return shipment => shipment.shipmentStatus == 'DSTS_SHPM_D_DELIVERED';
     }*/
   }

@@ -24,7 +24,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;"> Shipment ID </mat-header-cell>
       <mat-cell *matCellDef="let element"  [routerLink]="['/shipmentTracker', element.shipmentId]">
         <button mat-button >
-          <span style="font-size: x-small;">{{element.shipmentId}}</span>
+          <span style="font-size: x-small;">{{element.shipmentUserId}}</span>
         </button>
       </mat-cell>
     </ng-container>
@@ -60,22 +60,22 @@
 
     <ng-container matColumnDef="pickupFromDateTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup From Date</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.pickupFromDateTime | date : "medium" : "Z"}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.pickupFromDateTime | date : "MMM d, yyyy h:mm a" : "Z"}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="pickupToDateTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Pickup To Date</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.pickupToDateTime | date : "medium" : "Z"}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.pickupToDateTime | date : "MMM d, yyyy h:mm a" : "Z"}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="deliveryFromDateTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Delivery From Date </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.deliveryFromDateTime | date : "medium" : "Z"}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.deliveryFromDateTime | date : "MMM d, yyyy h:mm a" : "Z"}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="deliveryToDateTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Delivery To Date </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.deliveryToDateTime | date : "medium" : "Z"}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.deliveryToDateTime | date : "MMM d, yyyy h:mm a" : "Z"}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="commodityCode">

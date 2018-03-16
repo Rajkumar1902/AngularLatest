@@ -8,6 +8,7 @@ import {ShipmentLegs} from './shipmentlegs';
 
 export class Shipment {
     shipmentId: string;
+    shipmentUserId: string;
     freightTerms: FreightTerms;
     shipFromLocation: Location;
     shipToLocation: Location;
