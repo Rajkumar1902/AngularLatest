@@ -1,14 +1,27 @@
 
 <mat-toolbar style="font-size: small">
+  <!--<form class="form">-->
   Total Shipments: {{ totalShipments }}
   <span class="flex-spacer"></span>
-  <mat-form-field class="example-form-field">
-    <input matInput type="text" placeholder="Shipment ID" [(ngModel)]="value"/>
-    <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
-  <button mat-button  matSuffix mat-icon-button routerLink="/shipments"><mat-icon>search</mat-icon></button>
+    <mat-form-field class="autocomplete-width">
+      <input matInput placeholder="Shipment ID"  [matAutocomplete]="auto" [formControl]="shipmentIdControl">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let shipment of filteredShipments | async" [value]="shipment.shipmentUserId" (click)="setShipmentId(shipment.shipmentId)">
+          <span *ngIf="shipment.shipmentUserId != null">
+            <span style="font-size: small">{{ shipment.shipmentUserId }}</span>
+          </span>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+
+    <span *ngIf="selectedShipmentId != null;else allShipmentsSearch">
+    <button mat-button  matSuffix mat-icon-button [routerLink]="['/shipments', selectedShipmentId]"><mat-icon>search</mat-icon></button>
+    </span>
+    <ng-template #allShipmentsSearch>
+      <button mat-button  matSuffix mat-icon-button routerLink="/shipments"><mat-icon>search</mat-icon></button>
+    </ng-template>
+  <!--</form>-->
 </mat-toolbar>
 
 
@@ -21,7 +34,7 @@
 <div class="flex-container"
      fxLayout="row"
      fxLayoutGap="20px">
-  <mat-card> 
+  <mat-card>
     <div fxFlex>
       <fusioncharts
         [width]="width"

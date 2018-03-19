@@ -6,6 +6,8 @@ import { SHIPMENTS } from '../shared/TempData/shipments';
 import { Shipment } from '../shared/shipment';
 
 import { ShipperService } from '../services/shipper.service';
+import { Params, ActivatedRoute, ParamMap  } from '@angular/router';
+import {ShipmentLegs} from '../shared/shipmentlegs';
 
 @Component({
   selector: 'app-shipments',
@@ -18,6 +20,8 @@ export class ShipmentsComponent implements OnInit {
     'pickupToDateTime', 'deliveryFromDateTime', 'deliveryToDateTime', ];
 
   shipments: Shipment[];
+  shipment: Shipment;
+  errMess: string;
   dataSource: MatTableDataSource<Shipment>;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -38,22 +42,11 @@ export class ShipmentsComponent implements OnInit {
     //this.dataSource.paginator = this.paginator;
   }
 
-  constructor(private shipperService: ShipperService,
+  constructor(private shipperService: ShipperService, private route: ActivatedRoute,
               @Inject('BaseURL') private BaseURL) { }
 
   ngOnInit() {
     this.loadGrid();
-
-    /*let tempList = [];
-    return this.shipperService.getShipments()
-      .toPromise()
-      .then((result) => {
-        result.forEach(asset => {
-          tempList.push(asset);
-        });
-        this.shipments = tempList;
-        console.log(this.shipments);
-      });*/
   }
 
   refresh(){
@@ -61,8 +54,38 @@ export class ShipmentsComponent implements OnInit {
   }
 
   loadGrid(){
+    /*this.shipperService.getShipments().subscribe(shipments => {this.shipments = shipments;
+      this.dataSource = new MatTableDataSource<Shipment>(/!*SHIPMENTS*!/this.shipments);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+    });*/
+
+    this.route.params.subscribe((params : Params) => {
+      var shipmentId = parseInt(params['id']);
+      if (isNaN(shipmentId)) {
+        this.getShipments();
+      } else {
+        this.getShipment(shipmentId);
+      }
+    });
+  }
+
+  getShipment(shipmentId: number){
+    this.shipperService.getShipment(shipmentId).subscribe(shipment => {
+        this.shipments = [];
+        console.log(shipment.shipmentId);
+        this.shipments.push(shipment);
+        this.dataSource = new MatTableDataSource<Shipment>(this.shipments);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      },
+      errmess => this.errMess = <any>errmess);
+  }
+
+  getShipments(){
+    console.log("printing shipments");
     this.shipperService.getShipments().subscribe(shipments => {this.shipments = shipments;
-      this.dataSource = new MatTableDataSource<Shipment>(/*SHIPMENTS*/this.shipments);
+      this.dataSource = new MatTableDataSource<Shipment>(this.shipments);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
     });

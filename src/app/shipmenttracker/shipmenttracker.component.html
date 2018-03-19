@@ -39,11 +39,44 @@
               <br>
               <small *ngIf="node.departureTime != null">Departure:  {{ node.departureTime | date : "MMM d, yyyy h:mm a" : "Z" }}</small>
             </div>
+            <span *ngIf="index == 0">
+              <div class="first-line" [ngSwitch]="node.leftStatus">
+              <span class="node-status">
+                  <span *ngSwitchCase="'1'">Picked Up</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PROCESSING'">Processing</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PICKING_UP'">Picking Up</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_IN_TRANSIT'">In Transit</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_DELIVERED'">Partially Delivered</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_DELIVERED'">Delivered</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_POD'">Partially POD</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
+                  <span *ngSwitchDefault>{{node.leftStatus}}</span>
+                </span>
+                </div>
+            </span>
             <span *ngIf="index > 0">
-              <div class="{{ node.leftLineStyle }}"></div>
+              <div class="{{ node.leftLineStyle }}" [ngSwitch]="node.leftStatus">
+              <span class="node-status">
+                  <span *ngSwitchCase="'1'">Picked Up</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PROCESSING'">Processing</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PICKING_UP'">Picking Up</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_IN_TRANSIT'">In Transit</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_DELIVERED'">Partially Delivered</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_DELIVERED'">Delivered</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_PARTIALLY_POD'">Partially POD</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
+                  <span *ngSwitchDefault>{{node.leftStatus}}</span>
+                </span>
+                </div>
             </span>
            <span *ngIf="index != (nodes.length - 1) ">
-              <div class="{{ node.rightLineStyle }}" [ngSwitch]="node.status">
+              <div class="{{ node.rightLineStyle }}" [ngSwitch]="node.rightStatus">
                 <span class="node-status">
                   <span *ngSwitchCase="'1'">Picked Up</span>
                   <span *ngSwitchCase="'DSTS_SL_D_PROCESSING'">Processing</span>
@@ -56,11 +89,13 @@
                   <span *ngSwitchCase="'DSTS_SL_D_POD'">POD</span>
                   <span *ngSwitchCase="'DSTS_SL_D_CLOSED'">Closed</span>
                   <span *ngSwitchCase="'DSTS_SL_D_LLPURGED'">Purged</span>
-                  <span *ngSwitchDefault>{{node.status}}</span>
+                  <span *ngSwitchCase="'DSTS_SL_D_DEPARTED'">Departed</span>
+                  <span *ngSwitchCase="'12'">Departed</span>
+                  <span *ngSwitchDefault>{{node.rightStatus}}</span>
                 </span>
               </div>
             </span>
-            <span *ngIf="index == (nodes.length - 1) ">
+            <!--<span *ngIf="index == (nodes.length - 1) ">
               <div class="last-line" [ngSwitch]="node.status">
                 <span class="node-status">
                   <span *ngSwitchCase="'1'">Picked Up</span>
@@ -80,7 +115,7 @@
                   <span *ngSwitchDefault>{{node.status}}</span>
                 </span>
               </div>
-            </span>
+            </span>-->
 
           </div>
         </li>

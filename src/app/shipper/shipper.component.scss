@@ -25,3 +25,17 @@
   font-size: small;
 }
 
+.form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+  alignment: right;
+  align-items: right;
+  padding: 0px;
+}
+
+.autocomplete-width {
+  width: 30%;
+  alignment: right;
+}
+

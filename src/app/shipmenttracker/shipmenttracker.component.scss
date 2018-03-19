@@ -211,6 +211,17 @@ html {
   margin-left:20px;
 }
 
+.first-line {
+  position:absolute;
+  top:36px;
+  height:1px;
+  //border-top:1px solid #DDDDDD;
+  left:0;
+  right:50%;
+  margin-right:20px;
+  text-align:right;
+}
+
 
 .node-title-disabled {
   text-align: center;

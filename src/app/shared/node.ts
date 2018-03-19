@@ -12,4 +12,6 @@ export class Node {
   leftLineStyle: string = "left-line-default";
   rightLineStyle: string = "right-line-default";
   nodeTitleStyle: string = "node-title-enabled";
+  leftStatus: ShipmentLegStatus;
+  rightStatus: ShipmentLegStatus;
 }

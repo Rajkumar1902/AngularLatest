@@ -15,6 +15,7 @@ export const routes: Routes = [
     { path: 'freightforwarder', component: FreightforwarderComponent},
     { path: 'login', component: LoginComponent},
     { path: 'shipments', component: ShipmentsComponent},
+    { path: 'shipments/:id', component: ShipmentsComponent},
     { path: 'shipmentDetail/:id', component: ShipmentdetailComponent},
     { path: 'shipmentTracker/:id', component: ShipmenttrackerComponent},
     { path: '', redirectTo: '/login', pathMatch: 'full' }

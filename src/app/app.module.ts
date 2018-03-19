@@ -31,6 +31,7 @@ import {
   MatTooltipModule,
   MatExpansionModule,
   MatMenuModule,
+  MatAutocompleteModule,
 
 } from '@angular/material';
 
@@ -92,7 +93,8 @@ import {ParticipantService} from './services/participant.service';
     FusionChartsModule,
     MatTooltipModule,
     MatExpansionModule,
-    MatMenuModule
+    MatMenuModule,
+    MatAutocompleteModule,
    ],
   providers: [
     ShipperService, DataService, ParticipantService, {provide: 'BaseURL', useValue: baseURL},

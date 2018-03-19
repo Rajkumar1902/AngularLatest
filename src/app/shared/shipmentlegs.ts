@@ -24,5 +24,6 @@ export abstract class ShipmentLegs {
   actualDepartureDateTimeToLocation: string;
   arrivalDelay: number;
   departureDelay: number;
-  // Load load optional
+  carrierCode:string;
+  //load optional
 }
