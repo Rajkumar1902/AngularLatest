@@ -21,6 +21,14 @@ export class ShipmenttrackerComponent implements OnInit {
   shipmentLeg: ShipmentLegs;
   nodes: Node[] = [];
 
+  tiles = [
+    {text: 'One', cols: 3, rows: 1, color: 'lightblue'},
+    {text: 'Two', cols: 1, rows: 2, color: 'lightgreen'},
+    {text: 'Three', cols: 1, rows: 1, color: 'lightpink'},
+    {text: 'Four', cols: 2, rows: 1, color: '#DDBDF1'},
+  ];
+
+
   constructor(private shipperService: ShipperService,
               private route: ActivatedRoute,
               @Inject('BaseURL') private BaseURL) { }

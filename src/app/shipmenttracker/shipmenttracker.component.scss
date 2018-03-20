@@ -5,7 +5,7 @@
 
 .flex-container {
   display: flex;
-  height: 500px;
+  height: 450px;
   //align-items: center;
 }
 
@@ -238,5 +238,33 @@ html {
   font-weight: bold;
   color: #004f71;
 }
+
+#box {
+  //background-color: orange;
+  padding: 10px;
+  border: 1px solid #b5b3b9;
+  //width: 400px;
+  height: 110px;
+  //margin: 50px;
+  overflow: auto;
+}
+
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#content {
+  //background-color: orange;
+  color: black;
+  align-content: center;
+  align-items: center;
+  font-size: small;
+}
+
+
+
+
 
 

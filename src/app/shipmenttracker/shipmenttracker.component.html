@@ -1,22 +1,89 @@
+<mat-toolbar *ngIf="shipment!=null">
+  <h2>Shipment Details</h2>
+  <span class="flex-spacer"></span>
+  <button mat-icon-button>
+    <mat-icon matTooltip="Refresh" (click)="refresh()">refresh</mat-icon>
+  </button>
+  <button mat-icon-button [routerLink]="['/shipmentDetail', shipment.shipmentId]">
+    <mat-icon matTooltip="Grid View">list</mat-icon>
+    <!-- style="background-color: #00a9e0;; border-radius: 100px; color: white"-->
+  </button>
+  <button mat-icon-button routerLink="/shipments">
+    <mat-icon matTooltip="Back To Shipments">keyboard_arrow_left</mat-icon>
+  </button>
+</mat-toolbar>
 <div fxLayout="column" class="flex-container" >
 
-  <mat-toolbar>
-    <!-- <button mat-icon-button (click)="snav.toggle()">
-       <mat-icon>menu</mat-icon>
-     </button>-->
-    <h2>Shipment ID: {{shipment.shipmentUserId}}</h2>
-    <span class="flex-spacer"></span>
-    <button mat-icon-button>
-      <mat-icon matTooltip="Refresh" (click)="refresh()">refresh</mat-icon>
-    </button>
-    <button mat-icon-button [routerLink]="['/shipmentDetail', shipment.shipmentId]">
-      <mat-icon matTooltip="Grid View">list</mat-icon>
-      <!-- style="background-color: #00a9e0;; border-radius: 100px; color: white"-->
-    </button>
-    <button mat-icon-button routerLink="/shipments">
-      <mat-icon matTooltip="Back To Shipments">keyboard_arrow_left</mat-icon>
-    </button>
-  </mat-toolbar>
+
+  <br>
+
+  <mat-card class="home-card" >
+  <table border="0" style="font-size: small" width="970px">
+    <tr>
+      <td>
+        <table align="center" cellspacing="10px" cellpadding="5px">
+          <tr>
+            <td>Shipment ID :</td>
+            <td>{{shipment.shipmentUserId}}</td>
+          </tr>
+          <tr>
+            <td>Shipment User ID:</td>
+            <td>{{shipment.shipmentUserId}}</td>
+          </tr>
+          <tr>
+            <td>Origin Location:</td>
+            <td>{{shipment.shipFromLocation.locationName}}</td>
+          </tr>
+          <tr>
+            <td>Start Date Time:</td>
+            <td>{{shipment.pickupFromDateTime | date}}</td>
+          </tr>
+          <tr>
+            <td>Vessel ID:</td>
+            <td>166596</td>
+          </tr>
+
+        </table>
+      </td>
+      <td>
+        <table  align="center" cellspacing="10px" cellpadding="5px">
+          <tr>
+            <td>Customer:</td>
+            <td>{{shipment.customerCode}}</td>
+          </tr>
+          <tr>
+            <td>Shipment Status:</td>
+            <td>
+            <div [ngSwitch]="shipment.shipmentStatus">
+                  <span *ngSwitchCase="'DSTS_SHPM_D_PROCESSING'">Processing</span>
+                  <span *ngSwitchCase="'DSTS_SHPM_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
+                  <span *ngSwitchCase="'DSTS_SHPM_D_IN_TRANSIT'">In Transit</span>
+                  <span *ngSwitchCase="'DSTS_SHPM_D_DELIVERED'">Delivered</span>
+
+            </div>
+            </td>
+
+          </tr>
+          <tr>
+            <td>Destination Location:</td>
+            <td>{{shipment.shipToLocation.locationName}}</td>
+          </tr>
+          <tr>
+            <td>End Date Time:</td>
+            <td>{{shipment.deliveryToDateTime | date}}</td>
+          </tr>
+          <tr>
+            <td>Number of Legs:</td>
+            <td>{{shipment.shipmentLegs.length}}</td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  </mat-card>
+
 
   <div fxLayout="row" fxLayoutGap="10px"  class="flex-container" >
 
@@ -121,6 +188,42 @@
         </li>
       </ul>
       </div>
+
     </mat-card>
+
+
+  </div>
+  <div style="display: flex;font-size: x-small" >
+    <table cellpadding="5" border="0" cellspacing="5">
+      <tr>
+        <td><img src="/assets/images/processing.png" alt="Smiley face" width="15px" height="15px"></td>
+        <td>Not Started</td>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+        <td><img src="/assets/images/ontimeDelivered.png" alt="Smiley face" width="15px" height="15px"></td>
+        <td>On Time</td>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+        <td><img src="/assets/images/delayDelivered.png" alt="Smiley face" width="15px" height="15px"></td>
+        <td>Delayed</td>
+
+
+      </tr>
+    </table>
+
+  </div>
+<!--<div style="display: flex">
+  <div class="md-stepper-horizontal green">
+    <div class="md-step active done">
+      <div class="md-step-circle"><span></span></div>
+    </div>
+
+    <div class="md-step delayed done">
+      <div class="md-step-circle"><span></span></div>
+    </div>
   </div>
 </div>
+</div>-->
+
+
+
+
+
