@@ -17,14 +17,18 @@ import {ShipmentLegs} from '../shared/shipmentlegs';
   styleUrls: ['./shipper.component.scss']
 })
 export class ShipperComponent implements OnInit{
-  totalShipments: number;
+  totalShipmentCnt: number;
+  onTimeShipmentCnt: number;
+  delayedShipmentCnt: number;
+  inTransitShipmentCnt: number;
+  notStartedShipmentCnt: number;
   shipments: Shipment[];
   shipmentIdControl: FormControl;
   filteredShipments: Observable<any[]>;
   selectedShipmentId: string;
   width = 500;
   height = 300;
-  type = 'pie3d';
+  type = 'pie2d';
   dataFormat = 'json';
   shipmentStatusDataSource = {
     "chart": {
@@ -57,53 +61,45 @@ export class ShipperComponent implements OnInit{
     ]
   };
 
-  /*countriesDataSource = {
-    "chart": {
-      "caption": "Countries",
-      "subcaption": "",
-      "startingangle": "120",
-      "showlabels": "1",
-      "showlegend": "1",
-      "enablemultislicing": "0",
-      "slicingdistance": "15",
-      "showpercentvalues": "0",
-      "showpercentintooltip": "0",
-      "plottooltext": "countries : $label Total : $datavalue",
-      "theme": "fint"
-    },
-    "data": [
-      {
-        "label": "Denmark",
-        "value": "20"
-      },
-      {
-        "label": "Colombo",
-        "value": "30"
-      },
-      {
-        "label": "Belgium",
-        "value": "20"
-      }
-    ]
-  };*/
-
   constructor(private shipperService: ShipperService){}
 
   ngOnInit() {
     this.shipperService.getShipments().subscribe(shipments => {
       this.shipments = shipments;
-      this.totalShipments = this.shipments.length;
+      this.totalShipmentCnt = this.shipments.length;
       this.shipmentIdControl = new FormControl();
       this.filteredShipments = this.shipmentIdControl.valueChanges
         .pipe(
           startWith(''),
           map(shipmentId => shipmentId ? this.filterShipments(shipmentId) : this.shipments.slice())
         );
-    });
 
-    /*function deliveredShipments(shipment){
-        return shipment => shipment.shipmentStatus == 'DSTS_SHPM_D_DELIVERED';
-    }*/
+       this.onTimeShipmentCnt =  this.delayedShipmentCnt = this.shipments.filter(
+          shipment => shipment.shipmentStatus == 'DSTS_SHPM_D_DELIVERED' && this.getDelay(shipment) >= 0 ).length;   
+
+       this.inTransitShipmentCnt = this.shipments.filter(shipment => shipment.shipmentStatus == 'DSTS_SHPM_D_IN_TRANSIT').length;   
+
+       this.delayedShipmentCnt = this.shipments.filter(
+          shipment => shipment.shipmentStatus == 'DSTS_SHPM_D_DELIVERED' && this.getDelay(shipment) < 0 ).length;   
+
+       this.notStartedShipmentCnt = this.shipments.filter(
+         shipment => shipment.shipmentStatus == 'DSTS_SHPM_D_PROCESSING' 
+         || shipment.shipmentStatus == 'DSTS_SHPM_D_ASSIGNED_TO_CARRIER'
+         || shipment.shipmentStatus == null).length;   
+
+      this.shipments.filter(shipment => console.log(shipment.shipmentStatus)); 
+
+       console.log(this.totalShipmentCnt);    
+       
+    });
+  }
+
+  getDelay(shipment) : number {
+    var lastLeg = shipment.shipmentLegs.length - 1;
+    var delay =  Math.round(<any>new Date(shipment.shipmentLegs[lastLeg].computedArrivalDateTimeToLocation) - 
+    <any>new Date(shipment.shipmentLegs[lastLeg].actualArrivalDateTimeToLocation)) / 3600000;       
+    console.log('Delay is:::::::'+delay);
+    return delay;       
   }
 
   filterShipments(id: string) {
@@ -114,4 +110,23 @@ export class ShipperComponent implements OnInit{
   setShipmentId(shipmentId: string) {
     this.selectedShipmentId = shipmentId;
   }
+
+  getOnTimePercent(){
+    //return Math.round((this.onTimeShipmentCnt/this.totalShipmentCnt)*100)+"%";
+    return "70%";
+  }
+
+  getDelayedPercent(){
+      return Math.round((this.delayedShipmentCnt/this.totalShipmentCnt)*100)+"%";
+  }
+
+  getInTransitPercent(){
+    return Math.round((this.inTransitShipmentCnt/this.totalShipmentCnt)*100)+"%";
+  }
+
+  getNotStartedPercent(){
+    return Math.round((this.notStartedShipmentCnt/this.totalShipmentCnt)*100)+"%";
+  }
+
+   
 }
