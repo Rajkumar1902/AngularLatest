@@ -122,7 +122,9 @@ export const SHIPMENTS: Shipment[] = [
 
           "carrierCode":"PP.CHN.CARRIER",
           "arrivalDelay": null,
-          "departureDelay": null
+          "departureDelay": null,
+          "vesselName": null,
+          "voyageNumber": null
           //"load":"resource:com.jda.shipment.visibility.Load#94770"
         },
         {
@@ -169,7 +171,9 @@ export const SHIPMENTS: Shipment[] = [
 
           "carrierCode":"PP.CSCL",
           "arrivalDelay": null,
-          "departureDelay": null
+          "departureDelay": null,
+          "vesselName": null,
+          "voyageNumber": null
           //"load":"resource:com.jda.shipment.visibility.Load#94771"
         }
 

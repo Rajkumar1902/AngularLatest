@@ -25,5 +25,7 @@ export abstract class ShipmentLegs {
   arrivalDelay: number;
   departureDelay: number;
   carrierCode:string;
+  vesselName: string;
+  voyageNumber: string;
   //load optional
 }

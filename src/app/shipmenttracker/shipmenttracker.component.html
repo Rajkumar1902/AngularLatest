@@ -14,33 +14,35 @@
 </mat-toolbar>
 <div fxLayout="column" class="flex-container" >
 
-
   <br>
 
   <mat-card class="home-card" >
-  <table border="0" style="font-size: small" width="970px">
+  <table border="0" style="font-size: small" width="970px" class="fontColor">
     <tr>
       <td>
         <table align="center" cellspacing="10px" cellpadding="5px">
           <tr>
-            <td>Shipment ID :</td>
+            <td><b>Shipment ID:</b></td>
             <td>{{shipment.shipmentUserId}}</td>
           </tr>
           <tr>
-            <td>Shipment User ID:</td>
-            <td>{{shipment.shipmentUserId}}</td>
+            <td><b>Shipment Number:</b></td>
+            <td>{{shipment.shipmentId}}</td>
           </tr>
           <tr>
-            <td>Origin Location:</td>
+            <td><b>Origin Location:</b></td>
             <td>{{shipment.shipFromLocation.locationName}}</td>
           </tr>
           <tr>
-            <td>Start Date Time:</td>
-            <td>{{shipment.pickupFromDateTime | date}}</td>
+            <td><b>Start Date Time:</b></td>
+            <td>{{shipment.shipmentLegs[0].computedArrivalDateTimeFromLocation | date : "MMM d, yyyy h:mm a" : "Z"}}</td>
           </tr>
           <tr>
-            <td>Vessel ID:</td>
-            <td>166596</td>
+            <td><b>Vessel Name:</b></td>
+            <span *ngIf="shipment.shipmentLegs[1].vesselName != null;else default">
+              <td>{{shipment.shipmentLegs[1].vesselName}}></td>
+            </span>
+            <ng-template #default><td>MADRID MAERSK</td></ng-template>
           </tr>
 
         </table>
@@ -48,11 +50,11 @@
       <td>
         <table  align="center" cellspacing="10px" cellpadding="5px">
           <tr>
-            <td>Customer:</td>
+            <td><b>Customer:</b></td>
             <td>{{shipment.customerCode}}</td>
           </tr>
           <tr>
-            <td>Shipment Status:</td>
+            <td><b>Shipment Status:</b></td>
             <td>
             <div [ngSwitch]="shipment.shipmentStatus">
                   <span *ngSwitchCase="'DSTS_SHPM_D_PROCESSING'">Processing</span>
@@ -65,16 +67,17 @@
 
           </tr>
           <tr>
-            <td>Destination Location:</td>
+            <td><b>Destination Location:</b></td>
             <td>{{shipment.shipToLocation.locationName}}</td>
           </tr>
           <tr>
-            <td>End Date Time:</td>
-            <td>{{shipment.deliveryToDateTime | date}}</td>
+            <td><b>End Date Time:</b></td>
+            <td>{{shipment.shipmentLegs[shipment.shipmentLegs.length-1].computedArrivalDateTimeToLocation | date : "MMM d, yyyy h:mm a" : "Z"}}</td>
           </tr>
           <tr>
-            <td>Number of Legs:</td>
-            <td>{{shipment.shipmentLegs.length}}</td>
+            <td><b>Voyage Number:</b></td>
+            <td>{{shipment.shipmentLegs[1].voyageNumber}}</td>
+            <td *ngIf="shipment.shipmentLegs[1].voyageNumber == null">808L</td>
           </tr>
 
         </table>

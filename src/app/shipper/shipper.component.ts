@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import { ShipperService } from '../services/shipper.service';
 import { Shipment } from '../shared/shipment';
 
+
 import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs/Observable';
@@ -18,10 +19,13 @@ import {ShipmentLegs} from '../shared/shipmentlegs';
 })
 export class ShipperComponent implements OnInit{
   totalShipments: number;
+
   shipments: Shipment[];
   shipmentIdControl: FormControl;
   filteredShipments: Observable<any[]>;
+
   selectedShipmentId: string;
+
   width = 500;
   height = 300;
   type = 'pie3d';
@@ -42,16 +46,16 @@ export class ShipperComponent implements OnInit{
     },
     "data": [
       {
-        "label": "In-Transit %",
+        "label": "In-Transit",
         "value": "30"
       },
       {
-        "label": "On-Time %",
-        "value": "50"
+        "label": "On-Time",
+        "value": "20"
       },
       {
-        "label": "Delayed %",
-        "value": "20"
+        "label": "Delayed",
+        "value": "50"
       },
 
     ]
@@ -87,31 +91,68 @@ export class ShipperComponent implements OnInit{
     ]
   };*/
 
-  constructor(private shipperService: ShipperService){}
+
+  constructor(private shipperService: ShipperService){
+
+
+  }
 
   ngOnInit() {
     this.shipperService.getShipments().subscribe(shipments => {
       this.shipments = shipments;
       this.totalShipments = this.shipments.length;
+
       this.shipmentIdControl = new FormControl();
       this.filteredShipments = this.shipmentIdControl.valueChanges
         .pipe(
           startWith(''),
-          map(shipmentId => shipmentId ? this.filterShipments(shipmentId) : this.shipments.slice())
+          map(state => state ? this.filterStates(state) : this.shipments.slice())
         );
     });
 
-    /*function deliveredShipments(shipment){
-        return shipment => shipment.shipmentStatus == 'DSTS_SHPM_D_DELIVERED';
-    }*/
   }
 
-  filterShipments(id: string) {
+
+
+
+  /*states: State[] = [
+    {
+      name: 'Arkansas',
+      population: '2.978M',
+      // https://commons.wikimedia.org/wiki/File:Flag_of_Arkansas.svg
+      flag: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Flag_of_Arkansas.svg'
+    },
+    {
+      name: 'California',
+      population: '39.14M',
+      // https://commons.wikimedia.org/wiki/File:Flag_of_California.svg
+      flag: 'https://upload.wikimedia.org/wikipedia/commons/0/01/Flag_of_California.svg'
+    },
+    {
+      name: 'Florida',
+      population: '20.27M',
+      // https://commons.wikimedia.org/wiki/File:Flag_of_Florida.svg
+      flag: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Flag_of_Florida.svg'
+    },
+    {
+      name: 'Texas',
+      population: '27.47M',
+      // https://commons.wikimedia.org/wiki/File:Flag_of_Texas.svg
+      flag: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Flag_of_Texas.svg'
+    }
+  ];*/
+
+
+
+
+
+  filterStates(shipmentId: string) {
     return this.shipments.filter(shipment =>
-      shipment.shipmentId.toLowerCase().includes(id.toLowerCase()));
+      shipment.shipmentId.toLowerCase().includes(shipmentId.toLowerCase()));
   }
 
   setShipmentId(shipmentId: string) {
     this.selectedShipmentId = shipmentId;
   }
+
 }
