@@ -29,8 +29,6 @@
 <br>
 <br>
 <br>
-<br>
-<br>
 
 <div fxLayout="column" class="flex-container">
 <div fxLayout="row" fxLayoutGap="70px" class="flex-container">
@@ -50,7 +48,7 @@
             <div class="bar">
               <div class="bar-text" [ngStyle]="{ 'width': getInTransitPercent(), 'background-color': '#004f71'}">{{ getInTransitPercent() }}</div>
             </div>
-      
+
 
             <p><small style="padding-left:20px">Not Started <b>({{ notStartedShipmentCnt }})</b></small></p>
             <div class="bar">
@@ -60,9 +58,10 @@
             <span style="padding-left:200px;font-size: x-small"><b>( )</b>&nbsp;&nbsp;- &nbsp;&nbsp;No of Shipments </span>
         </div>
 
-      
+
   </mat-card>
- 
+
+
   <mat-card class="home-card">
      <div fxFlex>
         <fusioncharts
@@ -74,6 +73,6 @@
         </fusioncharts>
       </div>
   </mat-card>
-  
+
 </div>
 </div>

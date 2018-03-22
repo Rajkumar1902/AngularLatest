@@ -39,10 +39,10 @@
           </tr>
           <tr>
             <td><b>Vessel Name:</b></td>
-            <span *ngIf="shipment.shipmentLegs[1].vesselName != null;else default">
-              <td>{{shipment.shipmentLegs[1].vesselName}}></td>
-            </span>
-            <ng-template #default><td>MADRID MAERSK</td></ng-template>
+            <div *ngIf="shipment.shipmentLegs[1].vesselName != null;else defaultVessel" style="display: flex">
+              <td>{{shipment.shipmentLegs[1].vesselName}}</td>
+            </div>
+            <ng-template #defaultVessel><td>MADRID MAERSK</td></ng-template>
           </tr>
 
         </table>
@@ -61,6 +61,7 @@
                   <span *ngSwitchCase="'DSTS_SHPM_D_ASSIGNED_TO_CARRIER'">Assigned To Carrier</span>
                   <span *ngSwitchCase="'DSTS_SHPM_D_IN_TRANSIT'">In Transit</span>
                   <span *ngSwitchCase="'DSTS_SHPM_D_DELIVERED'">Delivered</span>
+              <span *ngSwitchDefault>Not Started</span>
 
             </div>
             </td>
@@ -76,8 +77,10 @@
           </tr>
           <tr>
             <td><b>Voyage Number:</b></td>
-            <td>{{shipment.shipmentLegs[1].voyageNumber}}</td>
-            <td *ngIf="shipment.shipmentLegs[1].voyageNumber == null">808L</td>
+            <div *ngIf="shipment.shipmentLegs[1].voyageNumber != null;else defaultVoyage" style="display: flex">
+              <td>{{shipment.shipmentLegs[1].voyageNumber}}</td>
+            </div>
+            <ng-template #defaultVoyage><td>803L</td></ng-template>
           </tr>
 
         </table>

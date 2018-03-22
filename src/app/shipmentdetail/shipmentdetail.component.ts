@@ -56,7 +56,7 @@ export class ShipmentdetailComponent implements OnInit {
         errmess => this.errMess = <any>errmess);
   }
 
-  calculateArrivalDelay() {
+  /*calculateArrivalDelay() {
     for (const shipmentLeg of this.shipment.shipmentLegs) {
       //console.log(entry); // 1, "string", false
      // console.log(Math.round(new Date(shipmentLeg.computedArrivalDateTimeFromLocation)-new Date('2019-01-05T00:00:00.000Z'))/3600000);
@@ -65,22 +65,58 @@ export class ShipmentdetailComponent implements OnInit {
 
       if(shipmentLeg.computedArrivalDateTimeFromLocation != null && shipmentLeg.actualArrivalDateTimeFromLocation != null)
         //shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date('2019-01-05T14:00:00.000Z')) / 3600000;
-        shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date(shipmentLeg.actualArrivalDateTimeFromLocation)) / 3600000;
+        shipmentLeg.arrivalDelay = Math.round((<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date(shipmentLeg.actualArrivalDateTimeFromLocation)) / 3600000);
       else
         shipmentLeg.arrivalDelay = null;
 
       if(shipmentLeg.computedDepartureDateTimeFromLocation != null && shipmentLeg.actualDepartureDateTimeFromLocation != null)
       //shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date('2019-01-05T14:00:00.000Z')) / 3600000;
-        shipmentLeg.departureDelay = Math.round(<any>new Date(shipmentLeg.computedDepartureDateTimeFromLocation) - <any>new Date(shipmentLeg.actualDepartureDateTimeFromLocation)) / 3600000;
+        shipmentLeg.departureDelay = Math.round((<any>new Date(shipmentLeg.computedDepartureDateTimeFromLocation) - <any>new Date(shipmentLeg.actualDepartureDateTimeFromLocation)) / 3600000);
       else
         shipmentLeg.departureDelay = null;
       console.log('calculating arrival delay' + shipmentLeg.arrivalDelay);
     }
-  }
+  }*/
 
-  reloadGridData(){
+  calculateArrivalDelay(){
 
-  }
+    let previousLeg:ShipmentLegs;
+
+
+    for ( let index = 0; index < this.shipment.shipmentLegs.length; index++) {
+      let shipmentLeg : ShipmentLegs = this.shipment.shipmentLegs[index];
+
+      if(index == 0) {
+        if( shipmentLeg.computedArrivalDateTimeFromLocation != null && shipmentLeg.actualArrivalDateTimeFromLocation != null)
+          shipmentLeg.arrivalDelay = Math.round(<any>new Date(shipmentLeg.computedArrivalDateTimeFromLocation) - <any>new Date(shipmentLeg.actualArrivalDateTimeFromLocation)) / 3600000;
+        else
+          shipmentLeg.arrivalDelay = null;
+
+
+        if(shipmentLeg.computedDepartureDateTimeFromLocation != null && shipmentLeg.actualDepartureDateTimeFromLocation != null)
+          shipmentLeg.departureDelay = Math.round(<any>new Date(shipmentLeg.computedDepartureDateTimeFromLocation) - <any>new Date(shipmentLeg.actualDepartureDateTimeFromLocation)) / 3600000;
+        else
+          shipmentLeg.departureDelay = null;
+      } else {
+          if( previousLeg.computedArrivalDateTimeToLocation != null && previousLeg.actualArrivalDateTimeToLocation != null)
+            shipmentLeg.arrivalDelay = Math.round(<any>new Date(previousLeg.computedArrivalDateTimeFromLocation) - <any>new Date(previousLeg.actualArrivalDateTimeFromLocation)) / 3600000;
+          else
+            shipmentLeg.arrivalDelay = null;
+
+
+          if(shipmentLeg.computedDepartureDateTimeFromLocation != null && shipmentLeg.actualDepartureDateTimeFromLocation != null)
+            shipmentLeg.departureDelay = Math.round(<any>new Date(shipmentLeg.computedDepartureDateTimeFromLocation) - <any>new Date(shipmentLeg.actualDepartureDateTimeFromLocation)) / 3600000;
+          else
+            shipmentLeg.departureDelay = null;
+      }
+      previousLeg = this.shipment.shipmentLegs[index];
+
+      //console.log(shipmentLeg.computedDepartureDateTimeFromLocation + " "+shipmentLeg.actualDepartureDateTimeFromLocation);
+      //console.log(Math.round(Math.round(<any>new Date(shipmentLeg.computedDepartureDateTimeFromLocation) - <any>new Date(shipmentLeg.actualDepartureDateTimeFromLocation)) / 3600000));
+      //console.log("arrival delay "+shipmentLeg.arrivalDelay);
+      //console.log("departure delay "+shipmentLeg.departureDelay);
+    }
+    }
   }
 
 

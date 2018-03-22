@@ -26,6 +26,9 @@ export class ShipperComponent implements OnInit{
   shipmentIdControl: FormControl;
   filteredShipments: Observable<any[]>;
   selectedShipmentId: string;
+  carrierShipmentMap : Map<string, number> = new Map<string, number>();
+  graphData: string;
+
   width = 500;
   height = 300;
   type = 'pie2d';
@@ -89,8 +92,12 @@ export class ShipperComponent implements OnInit{
 
       this.shipments.filter(shipment => console.log(shipment.shipmentStatus));
 
-      console.log(this.totalShipmentCnt);
+      this.populateCarrierShipmentMap(this.shipments);
+      this.graphData = this.getCarrierShipmentGraphData(this.carrierShipmentMap);
 
+     
+
+       //console.log(this.totalShipmentCnt);
     });
   }
 
@@ -128,5 +135,37 @@ export class ShipperComponent implements OnInit{
     return Math.round((this.notStartedShipmentCnt/this.totalShipmentCnt)*100)+"%";
   }
 
+  populateCarrierShipmentMap(shipments:Shipment[]){
+
+    for(let shipment of this.shipments){
+       for(let shipmentLeg of shipment.shipmentLegs){
+
+        let carrierCode: string = shipmentLeg.carrierCode;
+
+         if(this.carrierShipmentMap.get(carrierCode) == null){
+           this.carrierShipmentMap.set(carrierCode,1);
+         }else {
+           let shipmentCount: number = this.carrierShipmentMap.get(carrierCode);
+           this.carrierShipmentMap.set(carrierCode, shipmentCount++);
+         }
+       }
+
+    }
+  }
+
+  getCarrierShipmentGraphData(carrierShipmentMap: Map<string, number>): string {
+    let data: string = "";
+    carrierShipmentMap.forEach(function (item, key, mapObj) {
+     // document.write(item.toString() + " ");
+      data = data + "{ \"label\": \" "+key+"\", \"value\": \" "+item.toString()+"\" },";
+    });
+    console.log(data);
+    return data;
+
+    /*{
+      "label": "In-Transit %",
+      "value": "30"
+    },*/
+  }
 
 }
