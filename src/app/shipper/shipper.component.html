@@ -1,7 +1,8 @@
 
-<mat-toolbar style="font-size: small">
+<mat-toolbar>
   <!--<form class="form">-->
-  Total Shipments: {{ totalShipments }}
+ <!-- Total Shipments: {{ totalShipments }}-->
+ <h2>Shipment Summary</h2>
   <span class="flex-spacer"></span>
     <mat-form-field class="autocomplete-width">
       <input matInput placeholder="Shipment ID"  [matAutocomplete]="auto" [formControl]="shipmentIdControl">
@@ -24,42 +25,55 @@
   <!--</form>-->
 </mat-toolbar>
 
-
-<div><h5 style="padding-left: 10px">Shipments</h5><hr/></div>
-
+<br>
+<br>
+<br>
+<br>
 <br>
 <br>
 
 <div fxLayout="column" class="flex-container">
-<div class="flex-container"
-     fxLayout="row"
-     fxLayoutGap="20px">
-  <mat-card>
-    <div fxFlex>
-      <fusioncharts
-        [width]="width"
-        [height]="height"
-        [type]="type"
-        [dataFormat]="dataFormat"
-        [dataSource]="shipmentStatusDataSource">
-      </fusioncharts>
-    </div>
-  </mat-card>
+<div fxLayout="row" fxLayoutGap="70px" class="flex-container">
+  <mat-card class="home-card">
+    <div fxFlex style="width: 500px;height: 300px;">
+            <p><small style="padding-left:20px;">Delivered On-Time <b>({{ onTimeShipmentCnt }})</b></small> </p>
+            <div class="bar">
+              <div class="bar-text" [ngStyle]="{ 'width': getOnTimePercent(), 'background-color': '#00AE4D'}">{{ getOnTimePercent() }}</div>
+            </div>
 
-<!--
-  <mat-card>
-    <div fxFlex>
-      <fusioncharts
-        [width]="width"
-        [height]="height"
-        [type]="type"
-        [dataFormat]="dataFormat"
-        [dataSource]="countriesDataSource">
-      </fusioncharts>
-    </div>
+             <p><small style="padding-left:20px">Delivered with delay <b>({{ delayedShipmentCnt }})</b></small></p>
+            <div class="bar">
+              <div class="bar-text" [ngStyle]="{ 'width': getDelayedPercent(), 'background-color': '#f30531'}">{{ getDelayedPercent() }}</div>
+            </div>
+
+            <p><small style="padding-left:20px">In-Transit <b>({{ inTransitShipmentCnt }})</b></small></p>
+            <div class="bar">
+              <div class="bar-text" [ngStyle]="{ 'width': getInTransitPercent(), 'background-color': '#004f71'}">{{ getInTransitPercent() }}</div>
+            </div>
+      
+
+            <p><small style="padding-left:20px">Not Started <b>({{ notStartedShipmentCnt }})</b></small></p>
+            <div class="bar">
+             <div class="bar-text" [ngStyle]="{ 'width': getNotStartedPercent(), 'background-color': '#808080'}">{{ getNotStartedPercent() }}</div>
+            </div>
+
+            <span style="padding-left:200px;font-size: x-small"><b>( )</b>&nbsp;&nbsp;- &nbsp;&nbsp;No of Shipments </span>
+        </div>
+
+      
   </mat-card>
--->
+ 
+  <mat-card class="home-card">
+     <div fxFlex>
+        <fusioncharts
+          [width]="width"
+          [height]="height"
+          [type]="type"
+          [dataFormat]="dataFormat"
+          [dataSource]="shipmentStatusDataSource">
+        </fusioncharts>
+      </div>
+  </mat-card>
+  
 </div>
 </div>
-
-
