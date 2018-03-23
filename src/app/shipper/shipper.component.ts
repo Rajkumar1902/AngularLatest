@@ -35,7 +35,7 @@ export class ShipperComponent implements OnInit{
   dataFormat = 'json';
   shipmentStatusDataSource = {
     "chart": {
-      "caption": "Shipment Status",
+      "caption": "Carrier Shipment Status",
       "subcaption": "",
       "startingangle": "120",
       "showlabels": "1",
@@ -49,16 +49,16 @@ export class ShipperComponent implements OnInit{
     },
     "data": [
       {
-        "label": "In-Transit %",
-        "value": "30"
+        "label": "PP.CHN.CARRIER",
+        "value": "30%"
       },
       {
-        "label": "On-Time %",
-        "value": "50"
+        "label": "PP.CSCL",
+        "value": "50%"
       },
       {
-        "label": "Delayed %",
-        "value": "20"
+        "label": "PP.USA.CARRIER",
+        "value": "20%"
       },
 
     ]
@@ -95,7 +95,6 @@ export class ShipperComponent implements OnInit{
       this.populateCarrierShipmentMap(this.shipments);
       this.graphData = this.getCarrierShipmentGraphData(this.carrierShipmentMap);
 
-     
 
        //console.log(this.totalShipmentCnt);
     });
@@ -119,8 +118,8 @@ export class ShipperComponent implements OnInit{
   }
 
   getOnTimePercent(){
-    //return Math.round((this.onTimeShipmentCnt/this.totalShipmentCnt)*100)+"%";
-    return "70%";
+    return Math.round((this.onTimeShipmentCnt/this.totalShipmentCnt)*100)+"%";
+    //return "70%";
   }
 
   getDelayedPercent(){
